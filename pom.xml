@@ -6,7 +6,11 @@
 
     <groupId>org.hitcall</groupId>
     <artifactId>ifans</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>ifans</name>
+    <url>https://www.hjxsuper.top</url>
+    <description>ifans微服务系统</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -20,15 +24,17 @@
     </dependencyManagement>
 
     <modules>
-        <!--<module></module>-->
+        <module>ifans-system</module>
+        <module>ifans-gateway</module>
+        <module>ifans-auth</module>
     </modules>
-    <packaging>pom</packaging>
 
     <dependencies>
         <!-- bootstrap 启动器 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <version>3.1.4</version>
         </dependency>
     </dependencies>
 </project>
