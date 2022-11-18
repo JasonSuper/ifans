@@ -1,0 +1,8 @@
+FROM openjdk:17.0.2-jdk
+MAINTAINER Jason
+VOLUME /home/ifans
+RUN mrikr -p /home/ifans
+WORKDIR /home/ifans
+COPY ./jar/ifans-system.jar /home/ifans/ifans-system.jar
+ENTRYPOINT ["java","-jar","ifans-system.jar"]
+

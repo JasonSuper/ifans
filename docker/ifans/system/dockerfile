@@ -1,0 +1,8 @@
+FROM openjdk:17.0.2-jdk
+MAINTAINER Jason
+VOLUME /home/ifans
+RUN mrikr -p /home/ifans
+WORKDIR /home/ifans
+COPY ./jar/ifans-gateway.jar /home/ifans/ifans-gateway.jar
+ENTRYPOINT ["java","-jar","hitcode-gateway.jar"]
+
