@@ -19,7 +19,6 @@ import java.util.List;
  * 单数据源配置（jeecg.datasource.open = false时生效）
  */
 @Configuration
-@MapperScan(value = {"com.ifans.system.**.mapper*"})
 public class MybatisPlusSaasConfig {
     /**
      * tenant_id 字段名
