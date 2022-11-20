@@ -1,5 +1,6 @@
 package com.ifans.api.system.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -24,7 +25,7 @@ public class SysMenu extends BaseEntity {
     /**
      * 菜单ID
      */
-    @TableId
+    @TableId(type = IdType.ASSIGN_ID)
     private Long menuId;
 
     /**

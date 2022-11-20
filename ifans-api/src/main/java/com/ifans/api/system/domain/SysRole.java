@@ -1,9 +1,6 @@
 package com.ifans.api.system.domain;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.ifans.common.web.domain.BaseEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +21,7 @@ public class SysRole extends BaseEntity {
     /**
      * 角色ID
      */
-    @TableId
+    @TableId(type = IdType.ASSIGN_ID)
     private String id;
 
     /**
