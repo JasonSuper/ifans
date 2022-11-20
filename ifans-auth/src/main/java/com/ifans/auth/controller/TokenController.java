@@ -10,6 +10,7 @@ import com.ifans.common.utils.JwtUtils;
 import com.ifans.common.utils.SecurityUtils;
 import com.ifans.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -5,6 +5,7 @@ import com.ifans.api.system.fallback.FeignUserFallbackFactory;
 import com.ifans.api.system.model.LoginUser;
 import com.ifans.common.constant.SecurityConstants;
 import com.ifans.common.domaain.R;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

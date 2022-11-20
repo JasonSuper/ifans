@@ -44,7 +44,7 @@ public class TokenService {
      */
     public Map<String, Object> createToken(LoginUser loginUser) {
         String token = UUID.randomUUID().toString().replaceAll("-", "");
-        Long userId = loginUser.getSysUser().getUserId();
+        String userId = loginUser.getSysUser().getId();
         String userName = loginUser.getSysUser().getUserName();
         loginUser.setToken(token);
         loginUser.setUserid(userId);

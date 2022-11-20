@@ -11,7 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author HuangJX
  */
 @EnableDiscoveryClient
-@EnableFeignClients
+@EnableFeignClients(basePackages = "com.ifans")
 @SpringBootApplication
 public class IfansSnowFlakeApplication {
 

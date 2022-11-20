@@ -7,7 +7,9 @@ import com.ifans.common.domaain.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FallbackFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FeignUserFallbackFactory implements FallbackFactory<FeignUserService> {
     private static final Logger log = LoggerFactory.getLogger(FeignUserFallbackFactory.class);
 
