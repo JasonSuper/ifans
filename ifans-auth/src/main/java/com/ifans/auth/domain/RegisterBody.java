@@ -4,20 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * 用户登录对象
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginBody {
+public class RegisterBody {
+
     /**
-     * 邮箱
+     * 用户名
      */
-    private String email;
+    private String username;
 
     /**
      * 用户密码
      */
     private String password;
+
+    /**
+     * 邮箱
+     */
+    private String email;
 }

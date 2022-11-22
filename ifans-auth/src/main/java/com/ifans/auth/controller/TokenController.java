@@ -2,6 +2,7 @@ package com.ifans.auth.controller;
 
 import com.ifans.api.system.model.LoginUser;
 import com.ifans.auth.domain.LoginBody;
+import com.ifans.auth.domain.RegisterBody;
 import com.ifans.auth.service.SysLoginService;
 import com.ifans.common.auth.AuthUtil;
 import com.ifans.common.domaain.R;
@@ -33,7 +34,7 @@ public class TokenController {
     @PostMapping("login")
     public R<?> login(@RequestBody LoginBody form) {
         // 用户登录
-        LoginUser userInfo = sysLoginService.login(form.getUsername(), form.getPassword());
+        LoginUser userInfo = sysLoginService.login(form.getEmail(), form.getPassword());
         // 获取登录token
         return R.ok(tokenService.createToken(userInfo));
     }
@@ -48,6 +49,13 @@ public class TokenController {
             // 记录用户退出日志
             sysLoginService.logout(username);
         }
+        return R.ok();
+    }
+
+    @PostMapping("register")
+    public R<?> register(@RequestBody RegisterBody registerBody) {
+        // 用户注册
+        sysLoginService.register(registerBody);
         return R.ok();
     }
 }

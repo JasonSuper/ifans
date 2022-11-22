@@ -8,11 +8,11 @@ import com.ifans.api.system.domain.SysUser;
  */
 public interface ISysUserService extends IService<SysUser> {
 
-    /**
-     * 通过用户名查询用户
-     *
-     * @param userName 用户名
-     * @return 用户对象信息
-     */
-    SysUser selectUserByUserName(String userName);
+    SysUser selectUserByEmail(String email);
+
+    SysUser selectUserById(String userId);
+
+    String checkUserEmailUnique(SysUser sysUser);
+
+    boolean registerUser(SysUser sysUser);
 }

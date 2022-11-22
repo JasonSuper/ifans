@@ -38,5 +38,10 @@
             <artifactId>reactor-core</artifactId>
             <version>3.5.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 </project>

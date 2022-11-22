@@ -3,6 +3,8 @@ package com.ifans.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ifans.api.system.domain.SysUser;
+import com.ifans.common.constant.UserConstants;
+import com.ifans.common.utils.StringUtils;
 import com.ifans.system.mapper.SysUserMapper;
 import com.ifans.system.service.ISysUserService;
 import org.slf4j.Logger;
@@ -21,9 +23,30 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private SysUserMapper userMapper;
 
     @Override
-    public SysUser selectUserByUserName(String userName) {
+    public SysUser selectUserByEmail(String email) {
         LambdaQueryWrapper<SysUser> query = new LambdaQueryWrapper<>();
-        query.eq(SysUser::getUserName, userName);
+        query.eq(SysUser::getEmail, email);
         return userMapper.selectOne(query);
+    }
+
+    @Override
+    public SysUser selectUserById(String userId) {
+        return userMapper.selectById(userId);
+    }
+
+    @Override
+    public String checkUserEmailUnique(SysUser sysUser) {
+        LambdaQueryWrapper<SysUser> query = new LambdaQueryWrapper<>();
+        query.eq(SysUser::getEmail, sysUser.getEmail());
+        SysUser info = userMapper.selectOne(query);
+        if (StringUtils.isNotNull(info) && info.getEmail().equals(sysUser.getEmail())) {
+            return UserConstants.NOT_UNIQUE;
+        }
+        return UserConstants.UNIQUE;
+    }
+
+    @Override
+    public boolean registerUser(SysUser sysUser) {
+        return userMapper.insert(sysUser) > 0;
     }
 }

@@ -101,26 +101,31 @@ public class SysUser extends BaseEntity {
     /**
      * 部门对象
      */
+    @TableField(exist = false)
     private SysDept dept;
 
     /**
      * 角色对象
      */
+    @TableField(exist = false)
     private List<SysRole> roles;
 
     /**
      * 角色组
      */
+    @TableField(exist = false)
     private String[] roleIds;
 
     /**
      * 岗位组
      */
+    @TableField(exist = false)
     private String[] postIds;
 
     /**
      * 角色ID
      */
+    @TableField(exist = false)
     private String roleId;
 
     public SysUser(String id) {
@@ -132,7 +137,7 @@ public class SysUser extends BaseEntity {
     }
 
     public static boolean isAdmin(String userId) {
-        return userId != null && "1" == userId;
+        return userId != null && "1".equals(userId);
     }
 
     @Override

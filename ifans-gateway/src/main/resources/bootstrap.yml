@@ -17,6 +17,7 @@ spring:
         server-addr: 127.0.0.1:8848
         username: nacos
         password: nacos
+        namespace: ifans-dev
       config:
         # 配置中心地址
         server-addr: 127.0.0.1:8848
@@ -27,6 +28,7 @@ spring:
           - ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
         username: nacos
         password: nacos
+        namespace: ifans-dev
     sentinel:
       # 取消控制台懒加载
       eager: true

@@ -3,6 +3,7 @@ package com.ifans.auth.service;
 import com.ifans.api.system.FeignUserService;
 import com.ifans.api.system.domain.SysUser;
 import com.ifans.api.system.model.LoginUser;
+import com.ifans.auth.domain.RegisterBody;
 import com.ifans.common.constant.SecurityConstants;
 import com.ifans.common.constant.UserConstants;
 import com.ifans.common.domaain.R;
@@ -28,30 +29,30 @@ public class SysLoginService {
     /**
      * 登录
      */
-    public LoginUser login(String username, String password) {
+    public LoginUser login(String email, String password) {
         // 用户名或密码为空 错误
-        if (StringUtils.isAnyBlank(username, password)) {
+        if (StringUtils.isAnyBlank(email, password)) {
             //recordLogService.recordLogininfor(username, Constants.LOGIN_FAIL, "用户/密码必须填写");
-            throw new ServiceException("用户/密码必须填写");
+            throw new ServiceException("邮箱/密码必须填写");
         }
         // 密码如果不在指定范围内 错误
         if (password.length() < UserConstants.PASSWORD_MIN_LENGTH
                 || password.length() > UserConstants.PASSWORD_MAX_LENGTH) {
             //recordLogService.recordLogininfor(username, Constants.LOGIN_FAIL, "用户密码不在指定范围");
-            throw new ServiceException("用户密码不在指定范围");
+            throw new ServiceException("密码不在指定范围");
         }
         // 用户名不在指定范围内 错误
-        if (username.length() < UserConstants.USERNAME_MIN_LENGTH
+        /*if (username.length() < UserConstants.USERNAME_MIN_LENGTH
                 || username.length() > UserConstants.USERNAME_MAX_LENGTH) {
             //recordLogService.recordLogininfor(username, Constants.LOGIN_FAIL, "用户名不在指定范围");
             throw new ServiceException("用户名不在指定范围");
-        }
+        }*/
         // 查询用户信息
-        R<LoginUser> userResult = feignUserService.getUserInfo(username, SecurityConstants.INNER);
+        R<LoginUser> userResult = feignUserService.getUserInfo(email, SecurityConstants.INNER);
 
         if (StringUtils.isNull(userResult) || StringUtils.isNull(userResult.getData())) {
             //recordLogService.recordLogininfor(username, Constants.LOGIN_FAIL, "登录用户不存在");
-            throw new ServiceException("登录用户：" + username + " 不存在");
+            throw new ServiceException("用户不存在");
         }
 
         if (R.FAIL == userResult.getCode()) {
@@ -62,11 +63,11 @@ public class SysLoginService {
         SysUser user = userResult.getData().getSysUser();
         if (UserStatus.DELETED.getCode().equals(user.getDelFlag())) {
             //recordLogService.recordLogininfor(username, Constants.LOGIN_FAIL, "对不起，您的账号已被删除");
-            throw new ServiceException("对不起，您的账号：" + username + " 已被删除");
+            throw new ServiceException("对不起，您的账号：" + email + " 已被删除");
         }
         if (UserStatus.DISABLE.getCode().equals(user.getStatus())) {
             //recordLogService.recordLogininfor(username, Constants.LOGIN_FAIL, "用户已停用，请联系管理员");
-            throw new ServiceException("对不起，您的账号：" + username + " 已停用");
+            throw new ServiceException("对不起，您的账号：" + email + " 已停用");
         }
         passwordService.validate(user, password);
         //recordLogService.recordLogininfor(username, Constants.LOGIN_SUCCESS, "登录成功");
@@ -80,7 +81,11 @@ public class SysLoginService {
     /**
      * 注册
      */
-    public void register(String username, String password) {
+    public void register(RegisterBody registerBody) {
+        String username = registerBody.getUsername();
+        String password = registerBody.getPassword();
+        String email = registerBody.getEmail();
+
         // 用户名或密码为空 错误
         if (StringUtils.isAnyBlank(username, password)) {
             throw new ServiceException("用户/密码必须填写");
@@ -99,6 +104,7 @@ public class SysLoginService {
         sysUser.setUserName(username);
         sysUser.setNickName(username);
         sysUser.setPassword(SecurityUtils.encryptPassword(password));
+        sysUser.setEmail(email);
         R<?> registerResult = feignUserService.registerUserInfo(sysUser, SecurityConstants.INNER);
 
         if (R.FAIL == registerResult.getCode()) {
