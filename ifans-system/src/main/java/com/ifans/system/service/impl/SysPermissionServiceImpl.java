@@ -40,13 +40,13 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysRoleMapper, SysRole
 
     @Override
     public Set<String> getMenuPermission(SysUser user) {
-        Set<String> perms = new HashSet<String>();
+        Set<String> perms = new HashSet<>();
         // 管理员拥有所有权限
         if (user.isAdmin()) {
             perms.add("*:*:*");
         } else {
             List<SysRole> roles = user.getRoles();
-            if (!roles.isEmpty() && roles.size() > 1) {
+            if (roles != null && !roles.isEmpty() && roles.size() > 1) {
                 // 多角色设置permissions属性，以便数据权限匹配权限
                 for (SysRole role : roles) {
                     Set<String> rolePerms = menuService.selectMenuPermsByRoleId(role.getId());
