@@ -1,11 +1,11 @@
 package com.ifans.gateway.filter;
 
-import com.ifans.common.constant.CacheConstants;
-import com.ifans.common.constant.HttpStatus;
-import com.ifans.common.constant.SecurityConstants;
-import com.ifans.common.constant.TokenConstants;
-import com.ifans.common.utils.JwtUtils;
-import com.ifans.common.utils.StringUtils;
+import com.ifans.common.core.constant.CacheConstants;
+import com.ifans.common.core.constant.HttpStatus;
+import com.ifans.common.core.constant.SecurityConstants;
+import com.ifans.common.core.constant.TokenConstants;
+import com.ifans.common.core.utils.JwtUtils;
+import com.ifans.common.core.utils.StringUtils;
 import com.ifans.gateway.config.properties.IgnoreWhiteProperties;
 import com.ifans.gateway.utils.ServletUtils;
 import io.jsonwebtoken.Claims;

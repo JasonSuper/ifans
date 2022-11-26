@@ -15,4 +15,6 @@ public interface ISysUserService extends IService<SysUser> {
     String checkUserEmailUnique(SysUser sysUser);
 
     boolean registerUser(SysUser sysUser);
+
+    int updateAvatar(String userId, String url);
 }

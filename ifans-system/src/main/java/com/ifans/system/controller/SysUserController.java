@@ -2,17 +2,21 @@ package com.ifans.system.controller;
 
 import com.ifans.api.system.domain.SysUser;
 import com.ifans.api.system.model.LoginUser;
-import com.ifans.common.annotation.InnerAuth;
-import com.ifans.common.constant.UserConstants;
-import com.ifans.common.domaain.R;
-import com.ifans.common.utils.SecurityUtils;
-import com.ifans.common.utils.StringUtils;
-import com.ifans.common.web.domain.AjaxResult;
+import com.ifans.common.core.annotation.InnerAuth;
+import com.ifans.common.core.constant.UserConstants;
+import com.ifans.common.core.domain.R;
+import com.ifans.common.core.oss.OssService;
+import com.ifans.common.core.utils.SecurityUtils;
+import com.ifans.common.core.utils.StringUtils;
+import com.ifans.common.core.web.domain.AjaxResult;
 import com.ifans.system.service.ISysPermissionService;
 import com.ifans.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 @RestController
@@ -24,6 +28,9 @@ public class SysUserController {
 
     @Autowired
     private ISysPermissionService permissionService;
+
+    @Autowired
+    private OssService ossService;
 
     /**
      * 获取当前用户信息
@@ -76,5 +83,32 @@ public class SysUserController {
             return R.fail("保存用户'" + username + "'失败，注册账号已存在");
         }
         return R.ok(sysUserService.registerUser(sysUser));
+    }
+
+    /**
+     * 上传头像到阿里云OSS
+     *
+     * @param userId 用户id
+     * @param file   头像文件
+     */
+    @PostMapping("/updateAvatar")
+    public R updateAvatar(String userId, MultipartFile file) {
+        try {
+            //获取上传文件输入流
+            InputStream inputStream = file.getInputStream();
+            //获取文件名称
+            String fileName = file.getOriginalFilename();
+            //获取上传的文件  通过 MultipartFile
+            String url = ossService.simpleUpload(fileName, "avatar", inputStream);//返回上传图片的路径
+
+            if (StringUtils.isNotEmpty(url)) {
+                // 入库
+                sysUserService.updateAvatar(userId, url);
+                return R.ok(url, "上传头像成功");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return R.fail("修改头像失败");
     }
 }

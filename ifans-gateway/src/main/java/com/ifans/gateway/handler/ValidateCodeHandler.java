@@ -1,7 +1,7 @@
 package com.ifans.gateway.handler;
 
-import com.ifans.common.exception.CaptchaException;
-import com.ifans.common.web.domain.AjaxResult;
+import com.ifans.common.core.exception.CaptchaException;
+import com.ifans.common.core.web.domain.AjaxResult;
 import com.ifans.gateway.service.ValidateCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

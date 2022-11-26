@@ -1,7 +1,7 @@
 package com.ifans.gateway.service;
 
-import com.ifans.common.exception.CaptchaException;
-import com.ifans.common.web.domain.AjaxResult;
+import com.ifans.common.core.exception.CaptchaException;
+import com.ifans.common.core.web.domain.AjaxResult;
 
 import java.io.IOException;
 

@@ -1,10 +1,11 @@
 package com.ifans.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ifans.api.system.domain.SysUser;
-import com.ifans.common.constant.UserConstants;
-import com.ifans.common.utils.StringUtils;
+import com.ifans.common.core.constant.UserConstants;
+import com.ifans.common.core.utils.StringUtils;
 import com.ifans.system.mapper.SysUserMapper;
 import com.ifans.system.service.ISysUserService;
 import org.slf4j.Logger;
@@ -48,5 +49,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public boolean registerUser(SysUser sysUser) {
         return userMapper.insert(sysUser) > 0;
+    }
+
+    @Override
+    public int updateAvatar(String userId, String url) {
+        LambdaUpdateWrapper<SysUser> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.set(SysUser::getAvatar, url).eq(SysUser::getId, userId);
+        return userMapper.update(null, wrapper);
     }
 }

@@ -1,12 +1,12 @@
 package com.ifans.gateway.service.impl;
 
 import com.google.code.kaptcha.Producer;
-import com.ifans.common.constant.CacheConstants;
-import com.ifans.common.constant.Constants;
-import com.ifans.common.exception.CaptchaException;
-import com.ifans.common.utils.StringUtils;
-import com.ifans.common.utils.sign.Base64;
-import com.ifans.common.web.domain.AjaxResult;
+import com.ifans.common.core.constant.CacheConstants;
+import com.ifans.common.core.constant.Constants;
+import com.ifans.common.core.exception.CaptchaException;
+import com.ifans.common.core.utils.StringUtils;
+import com.ifans.common.core.utils.sign.Base64;
+import com.ifans.common.core.web.domain.AjaxResult;
 import com.ifans.gateway.config.properties.CaptchaProperties;
 import com.ifans.gateway.service.ValidateCodeService;
 import org.springframework.beans.factory.annotation.Autowired;

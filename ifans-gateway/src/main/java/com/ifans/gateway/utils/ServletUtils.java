@@ -1,10 +1,10 @@
 package com.ifans.gateway.utils;
 
 import com.alibaba.fastjson2.JSON;
-import com.ifans.common.constant.Constants;
-import com.ifans.common.domaain.R;
-import com.ifans.common.text.Convert;
-import com.ifans.common.utils.StringUtils;
+import com.ifans.common.core.constant.Constants;
+import com.ifans.common.core.domain.R;
+import com.ifans.common.core.text.Convert;
+import com.ifans.common.core.utils.StringUtils;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

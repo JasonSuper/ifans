@@ -1,10 +1,10 @@
 package com.ifans.auth.service;
 
 import com.ifans.api.system.domain.SysUser;
-import com.ifans.common.constant.CacheConstants;
-import com.ifans.common.exception.ServiceException;
+import com.ifans.common.core.constant.CacheConstants;
+import com.ifans.common.core.exception.ServiceException;
 import com.ifans.common.redis.RedisService;
-import com.ifans.common.utils.SecurityUtils;
+import com.ifans.common.core.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

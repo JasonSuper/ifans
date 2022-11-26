@@ -1,7 +1,7 @@
 package com.ifans.gateway.handler;
 
-import com.ifans.common.html.EscapeUtil;
-import com.ifans.common.utils.StringUtils;
+import com.ifans.common.core.html.EscapeUtil;
+import com.ifans.common.core.utils.StringUtils;
 import com.ifans.gateway.config.properties.XssProperties;
 import io.netty.buffer.ByteBufAllocator;
 import org.springframework.beans.factory.annotation.Autowired;
