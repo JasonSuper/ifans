@@ -25,6 +25,7 @@
         <module>ifans-common</module>
         <module>ifans-api</module>
         <module>ifans-common-core</module>
+        <module>ifans-store</module>
     </modules>
 
     <!-- 依赖声明 -->

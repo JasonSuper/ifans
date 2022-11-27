@@ -1,0 +1,28 @@
+package com.ifans.store;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+
+/**
+ * 道具服务启动程序
+ *
+ * @author HuangJX
+ */
+@EnableDiscoveryClient
+@EnableFeignClients(basePackages = "com.ifans")
+@MapperScan(value = {"com.ifans.store.**.mapper*"})
+@SpringBootApplication(scanBasePackages = {"com.ifans"})
+public class IfansStoreApplication {
+
+    public static void main(String[] args) {
+        try {
+            SpringApplication.run(IfansStoreApplication.class, args);
+            System.out.println("ifans系统启动成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
