@@ -1,5 +1,6 @@
 package com.ifans.system.controller;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.ifans.api.system.domain.SysUser;
 import com.ifans.api.system.model.LoginUser;
 import com.ifans.common.core.annotation.InnerAuth;
@@ -88,11 +89,10 @@ public class SysUserController {
     /**
      * 上传头像到阿里云OSS
      *
-     * @param userId 用户id
      * @param file   头像文件
      */
     @PostMapping("/updateAvatar")
-    public R updateAvatar(String userId, MultipartFile file) {
+    public R updateAvatar( MultipartFile file) {
         try {
             //获取上传文件输入流
             InputStream inputStream = file.getInputStream();
@@ -103,12 +103,23 @@ public class SysUserController {
 
             if (StringUtils.isNotEmpty(url)) {
                 // 入库
-                sysUserService.updateAvatar(userId, url);
+                sysUserService.updateAvatar(SecurityUtils.getUserId(), url);
                 return R.ok(url, "上传头像成功");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return R.fail("修改头像失败");
+    }
+
+    @PostMapping("/editInfo")
+    public R editInfo(@RequestBody SysUser sysUser) {
+        LambdaUpdateWrapper<SysUser> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.set(SysUser::getUserName, sysUser.getUserName()).set(SysUser::getSex, sysUser.getSex()).eq(SysUser::getId, SecurityUtils.getUserId());
+        boolean isOK = sysUserService.update(wrapper);
+        if (isOK) {
+            return R.ok();
+        }
+        return R.fail();
     }
 }
