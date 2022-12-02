@@ -2,7 +2,7 @@ package com.ifans.store.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ifans.api.system.domain.StoreGoods;
+import com.ifans.api.store.domain.StoreGoods;
 
 /**
  * 道具信息 业务层

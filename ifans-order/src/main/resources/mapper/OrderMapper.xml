@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifans.order.mapper.OrderMapper">
+
+    <select id="selectByOrderNo" resultType="com.ifans.api.store.domain.StoreGoods">
+        SELECT * FROM store_order
+        WHERE order_no = #{order_no}
+    </select>
+
+    <update id="updateOrderStatus">
+        UPDATE store_order SET pay_status = #{statusCode} WHERE order_no = #{orderNo}
+    </update>
+</mapper>

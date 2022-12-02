@@ -7,6 +7,7 @@ import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
+import com.ifans.common.core.domain.R;
 import com.ifans.snowflake.util.SnowFlake;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,11 +69,10 @@ public class SnowFlakeController {
 
     @SentinelResource(value = "snowflake", fallback = "fallbackForGetSnowFlakeId", blockHandler = "blockHandlerForGetSnowFlakeId")
     @GetMapping("/getSnowFlakeId")
-    public Map<String, Object> getSnowFlakeId() {
+    public R getSnowFlakeId() {
         Map<String, Object> map = new HashMap<>();
-        map.put("code", 200);
         map.put("id", snowFlake.nextId());
-        return map;
+        return R.ok(map);
     }
 
     public Map<String, Object> fallbackForGetSnowFlakeId(Throwable ex) {

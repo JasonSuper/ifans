@@ -1,4 +1,4 @@
-package com.ifans.api.system.domain;
+package com.ifans.api.store.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
@@ -59,6 +59,12 @@ public class StoreGoods {
     @TableLogic
     @TableField("del_flag")
     private String delFlag;
+
+    /**
+     * 计量单位
+     */
+    @TableField("unit")
+    private String unit;
 
     @TableField("create_by")
     private String createBy;

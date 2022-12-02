@@ -2,7 +2,7 @@ package com.ifans.store.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ifans.api.system.domain.StoreGoods;
+import com.ifans.api.store.domain.StoreGoods;
 import com.ifans.common.core.web.domain.AjaxResult;
 import com.ifans.store.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class StoreController {
     }
 
     @GetMapping("/info/{id}")
-    public AjaxResult list(@PathVariable String id) {
+    public AjaxResult info(@PathVariable String id) {
         StoreGoods storeGoods = storeService.getById(id);
         return AjaxResult.success(storeGoods);
     }
