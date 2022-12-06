@@ -1,5 +1,6 @@
 package com.ifans.store.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ifans.api.store.domain.StoreGoods;
@@ -24,6 +25,6 @@ public class StoreController {
     @GetMapping("/info/{id}")
     public AjaxResult info(@PathVariable String id) {
         StoreGoods storeGoods = storeService.getById(id);
-        return AjaxResult.success(storeGoods);
+        return AjaxResult.success("成功", JSON.toJSONString(storeGoods));
     }
 }

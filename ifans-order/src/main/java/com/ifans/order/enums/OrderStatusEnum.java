@@ -7,7 +7,9 @@ public enum OrderStatusEnum {
     RECIEVED(3,"已完成"),
     CANCLED(4,"已取消"),
     SERVICING(5,"售后中"),
-    SERVICED(6,"售后完成");
+    SERVICED(6,"售后完成"),
+    REFUND(7, "已退款");
+
     private Integer code;
     private String msg;
 

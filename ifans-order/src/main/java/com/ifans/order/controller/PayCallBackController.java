@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/callback")
+@RequestMapping("/payCallBack")
 public class PayCallBackController {
 
     @Autowired
@@ -47,8 +47,7 @@ public class PayCallBackController {
         }
         // 只要我们收到了支付宝给我们的异步通知 验签成功 我们就要给支付宝返回success
         if (AlipaySignature.rsaCheckV1(params, alipayTemplate.getAlipay_public_key(), alipayTemplate.getCharset(), alipayTemplate.getSign_type())) {
-            //return orderService.handlePayResult(vo);
-            return null;
+            return orderService.handlePayResult(vo);
         }
         System.err.println("受到恶意验签攻击");
         return "fail";

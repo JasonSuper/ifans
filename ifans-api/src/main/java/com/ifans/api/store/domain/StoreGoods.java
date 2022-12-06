@@ -1,6 +1,9 @@
 package com.ifans.api.store.domain;
 
+import com.alibaba.fastjson.serializer.ToStringSerializer;
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.ser.std.NumberSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,6 +42,7 @@ public class StoreGoods {
      * 价格
      */
     @TableField("price")
+    @JSONField(name="price", serializeUsing = ToStringSerializer.class)
     private BigDecimal price;
 
     /**

@@ -2,7 +2,7 @@ package com.ifans.store.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ifans.api.system.domain.StoreGoods;
+import com.ifans.api.store.domain.StoreGoods;
 import com.ifans.store.mapper.StoreMapper;
 import com.ifans.store.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;

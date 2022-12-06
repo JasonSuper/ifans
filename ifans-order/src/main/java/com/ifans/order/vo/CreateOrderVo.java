@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * 下单参数
  */
@@ -12,13 +14,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateOrderVo {
 
-    private String token;
+    private long timestamp;
 
     private String goodsId;
 
     private int count;
 
-    private int pay_money;
+    private BigDecimal pay_money;
 
-    private long timestamp;
+    // 再下一单 0否 1是
+    private int again;
 }

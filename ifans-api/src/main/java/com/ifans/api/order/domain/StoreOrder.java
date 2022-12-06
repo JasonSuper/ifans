@@ -1,5 +1,7 @@
 package com.ifans.api.order.domain;
 
+import com.alibaba.fastjson.serializer.ToStringSerializer;
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -42,27 +44,36 @@ public class StoreOrder {
     private String userId;
 
     /**
-     * 购买数
+     * 支付方式【1->支付宝；2->微信；3->银联； 4->货到付款；】
      */
-    @TableField("num")
-    private Integer num;
+    @TableField("pay_type")
+    private int payType;
+
+    /**
+     * 支付时间
+     */
+    @TableField("payment_time")
+    private Date paymentTime;
 
     /**
      * 商品总额
      */
     @TableField("order_price")
+    @JSONField(name="orderPrice", serializeUsing = ToStringSerializer.class)
     private BigDecimal orderPrice;
 
     /**
      * 应付金额
      */
     @TableField("must_price")
+    @JSONField(name="mustPrice", serializeUsing = ToStringSerializer.class)
     private BigDecimal mustPrice;
 
     /**
      * 实付金额
      */
     @TableField("pay_price")
+    @JSONField(name="payPrice", serializeUsing = ToStringSerializer.class)
     private BigDecimal payPrice;
 
     /**

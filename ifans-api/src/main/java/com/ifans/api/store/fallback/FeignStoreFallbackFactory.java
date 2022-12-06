@@ -1,6 +1,6 @@
 package com.ifans.api.store.fallback;
 
-import com.ifans.api.store.domain.FeignStoreService;
+import com.ifans.api.store.FeignStoreService;
 import com.ifans.common.core.web.domain.AjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

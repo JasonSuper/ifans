@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * 否则将订单结束，返回库存
  */
 @RocketMQMessageListener(
-        consumerGroup = "skill-order-delay-consumer",
+        consumerGroup = "order-delay-consumer",
         topic = "order-close-topic",
         consumeMode = ConsumeMode.CONCURRENTLY, // 并发模式
         messageModel = MessageModel.CLUSTERING // 集群模式，如果有多个消费者，则平摊消费消息

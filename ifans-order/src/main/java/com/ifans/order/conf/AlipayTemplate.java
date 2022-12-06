@@ -1,13 +1,19 @@
 package com.ifans.order.conf;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradeCloseRequest;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.request.AlipayTradeQueryRequest;
+import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeCloseResponse;
 import com.alipay.api.response.AlipayTradePagePayResponse;
+import com.alipay.api.response.AlipayTradeQueryResponse;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.ifans.order.vo.PayVo;
+import com.ifans.order.vo.RefundPayVo;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -84,18 +90,68 @@ public class AlipayTemplate {
     /**
      * 交易关闭
      */
-    public boolean closepay(String orderSn) throws AlipayApiException {
+    public boolean closepay(String orderNo) throws AlipayApiException {
         AlipayClient alipayClient = new DefaultAlipayClient(gatewayUrl, app_id, merchant_private_key, "json", charset, alipay_public_key, sign_type);
         AlipayTradeCloseRequest request = new AlipayTradeCloseRequest();
         request.setBizContent("{" +
-                "    \"out_trade_no\":\"" + orderSn + "\"" +
+                "    \"out_trade_no\":\"" + orderNo + "\"" +
                 "  }");
         AlipayTradeCloseResponse response = alipayClient.execute(request);
         if (response.isSuccess()) {
-            System.out.println("调用成功");
+            System.out.println("交易关闭，调用成功，返回结果：" + response.getBody());
         } else {
-            System.out.println("调用失败");
+            if (response.getSubCode().equals("ACQ.TRADE_NOT_EXIST")) {
+                return true;
+            }
+            System.out.println("交易关闭，调用失败，返回码：" + response.getCode() + "，返回描述：" + response.getMsg());
         }
         return response.isSuccess();
+    }
+
+    /**
+     * 统一收单交易查询
+     */
+    public String querypay(String orderNo) throws AlipayApiException {
+        AlipayClient alipayClient = new DefaultAlipayClient(gatewayUrl, app_id, merchant_private_key, "json", charset, alipay_public_key, sign_type);
+        AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+        JSONObject bizContent = new JSONObject();
+        bizContent.put("out_trade_no", orderNo);
+        //bizContent.put("trade_no", "2014112611001004680073956707");
+        request.setBizContent(bizContent.toString());
+        AlipayTradeQueryResponse response = alipayClient.execute(request);
+        if(response.isSuccess()){
+            System.out.println("交易查询，调用成功，返回结果：" + response.getBody());
+            return response.getBody();
+        } else {
+            System.out.println("交易查询，调用失败，返回码：" + response.getCode() + "，返回描述：" + response.getMsg());
+            return null;
+        }
+    }
+
+    /**
+     * 交易退款
+     */
+    public String refundpay(RefundPayVo vo) throws AlipayApiException {
+        AlipayClient alipayClient = new DefaultAlipayClient(gatewayUrl, app_id, merchant_private_key, "json", charset, alipay_public_key, sign_type);
+        AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
+        JSONObject bizContent = new JSONObject();
+        bizContent.put("out_trade_no", vo.getOut_trade_no());
+        bizContent.put("refund_amount", vo.getRefund_amount());
+        bizContent.put("out_request_no", vo.getOut_request_no());
+
+        //// 返回参数选项，按需传入
+        //JSONArray queryOptions = new JSONArray();
+        //queryOptions.add("refund_detail_item_list");
+        //bizContent.put("query_options", queryOptions);
+
+        request.setBizContent(bizContent.toString());
+        AlipayTradeRefundResponse response = alipayClient.execute(request);
+        if(response.isSuccess()){
+            System.out.println("交易退款，调用成功，返回结果：" + response.getBody());
+            return response.getBody();
+        } else {
+            System.out.println("交易退款，调用失败，返回码：" + response.getCode() + "，返回描述：" + response.getMsg());
+            return null;
+        }
     }
 }
