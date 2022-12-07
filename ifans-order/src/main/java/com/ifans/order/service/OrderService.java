@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ifans.api.order.domain.StoreOrder;
-import com.ifans.api.order.domain.StoreOrderItem;
 import com.ifans.api.order.vo.StoreOrderVo;
 import com.ifans.order.vo.CreateOrderVo;
 import com.ifans.order.vo.PayAsyncVo;
 
+import java.text.ParseException;
 import java.util.List;
 
 public interface OrderService extends IService<StoreOrder> {
@@ -40,5 +40,12 @@ public interface OrderService extends IService<StoreOrder> {
      */
     String handlePayResult(PayAsyncVo vo);
 
+    void orderHandle(String paytimeStr, String payPrice, StoreOrder storeOrder) throws ParseException;
+
     void cleanOrderRedis(String id, String userid);
+
+    /**
+     * 获取超过5分钟未支付的订单
+     */
+    List<StoreOrder> getNotPayOrder();
 }

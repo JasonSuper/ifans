@@ -1,4 +1,4 @@
-package com.ifans.order.conf;
+package com.ifans.order.pay;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
@@ -18,10 +18,13 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * 支付宝 API模板
+ */
 @ConfigurationProperties(prefix = "alipay")
 @Component
 @Data
-public class AlipayTemplate {
+public class AliPayTemplate {
 
     //在支付宝创建的应用的id
     private String app_id;

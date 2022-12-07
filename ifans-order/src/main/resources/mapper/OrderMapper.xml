@@ -12,12 +12,21 @@
     </select>
 
     <select id="searchOrderItemsByOrderId" resultType="com.ifans.api.order.domain.StoreOrderItem">
-        SELECT * FROM store_order_item
+        SELECT *
+        FROM store_order_item
         where order_id = #{id}
     </select>
 
     <select id="selectByOrderNo" resultType="com.ifans.api.order.domain.StoreOrder">
-        SELECT * FROM store_order
+        SELECT *
+        FROM store_order
         WHERE order_no = #{order_no}
+    </select>
+
+    <select id="getNotPayOrder" resultType="com.ifans.api.order.domain.StoreOrder">
+        SELECT *
+        FROM store_order
+        WHERE pay_status = 0
+          and order_time <![CDATA[ <= ]]> DATE_SUB(NOW(), INTERVAL 5 MINUTE)
     </select>
 </mapper>

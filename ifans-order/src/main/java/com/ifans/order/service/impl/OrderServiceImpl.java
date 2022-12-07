@@ -15,11 +15,11 @@ import com.ifans.api.store.FeignStoreService;
 import com.ifans.api.store.domain.StoreGoods;
 import com.ifans.common.core.utils.SecurityUtils;
 import com.ifans.common.core.web.domain.AjaxResult;
-import com.ifans.order.conf.AlipayTemplate;
 import com.ifans.order.controller.OrderController;
 import com.ifans.order.enums.OrderStatusEnum;
 import com.ifans.order.mapper.OrderItemMapper;
 import com.ifans.order.mapper.OrderMapper;
+import com.ifans.order.pay.AliPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.ifans.order.service.PaymentInfoService;
 import com.ifans.order.vo.CreateOrderVo;
@@ -54,7 +54,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
-    private AlipayTemplate alipayTemplate;
+    private AliPayTemplate alipayTemplate;
     @Autowired
     private RedissonClient redissonClient;
     @Autowired
@@ -98,7 +98,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
 
         Message message = MessageBuilder.withPayload(storeOrder.getOrderNo().getBytes(StandardCharsets.UTF_8)).build();
         // 默认值为“1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h”，18个level
-        rocketMQTemplate.syncSend("order-close-topic", message, 30000, 14); // 发送延迟消息
+        rocketMQTemplate.syncSend("order-close-topic", message, 30000, 16); // 发送延迟消息
 
         // 生成token
         //long token = IdWorker.getId(storeOrder);
@@ -163,8 +163,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     @Transactional(rollbackFor = Exception.class)
     public String handlePayResult(PayAsyncVo vo) {
         String orderNo = vo.getOut_trade_no();
-        RLock rLock = redissonClient.getLock(orderNo);
-        rLock.lock(10, TimeUnit.SECONDS);
+        RLock rlock = redissonClient.getLock(orderNo);
+        rlock.lock(20, TimeUnit.SECONDS);
 
         // 加锁防止并发保存订单状态以及并发的支付问题
         // 支付宝的异步回调和同步回调，都会调用这个方法生成账单流水
@@ -190,29 +190,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
 
                 // 2.修改订单状态信息
                 if (vo.getTrade_status().equals("TRADE_SUCCESS") || vo.getTrade_status().equals("TRADE_FINISHED")) {
-                    if (OrderStatusEnum.CREATE_NEW.getCode() == storeOrder.getPayStatus()) {
-                        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        Date paytime = sf.parse(vo.getGmt_payment());
-
-                        storeOrder.setPayStatus(OrderStatusEnum.PAYED.getCode());
-                        storeOrder.setPayPrice(new BigDecimal(vo.getBuyer_pay_amount()));
-                        storeOrder.setPaymentTime(paytime);
-                        storeOrder.setUpdateTime(new Date());
-
-                        // 支付成功
-                        orderMapper.updateById(storeOrder);
-                        // 清除redis缓存
-                        cleanOrderRedis(storeOrder.getId(), storeOrder.getUserId());
-
-                    } else if (OrderStatusEnum.RECIEVED.getCode() != storeOrder.getPayStatus()) { // 订单已取消|已付款|已发送等，客户却付款了，启动退款流程
-                        RefundPayVo refundPayVo = new RefundPayVo();
-                        refundPayVo.setOut_trade_no(storeOrder.getOrderNo());
-                        refundPayVo.setRefund_amount(vo.getBuyer_pay_amount());
-
-                        // 退款请求，发送MQ
-                        Message message = MessageBuilder.withPayload(JSON.toJSONString(refundPayVo)).build();
-                        rocketMQTemplate.syncSend("order-refundpay-topic", message);
-                    }
+                    orderHandle(vo.getGmt_payment(), vo.getBuyer_pay_amount(), storeOrder);
                 }
             }
             return "success";
@@ -220,7 +198,34 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
             e.printStackTrace();
             return "fail";
         } finally {
-            rLock.unlock();
+            rlock.unlock();
+        }
+    }
+
+    @Override
+    public void orderHandle(String paytimeStr, String payPrice, StoreOrder storeOrder) throws ParseException {
+        if (OrderStatusEnum.CREATE_NEW.getCode() == storeOrder.getPayStatus()) {
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date paytime = sf.parse(paytimeStr);
+
+            storeOrder.setPayStatus(OrderStatusEnum.PAYED.getCode());
+            storeOrder.setPayPrice(new BigDecimal(payPrice));
+            storeOrder.setPaymentTime(paytime);
+            storeOrder.setUpdateTime(new Date());
+
+            // 支付成功
+            orderMapper.updateById(storeOrder);
+            // 清除redis缓存
+            cleanOrderRedis(storeOrder.getId(), storeOrder.getUserId());
+
+        } else if (OrderStatusEnum.CANCLED.getCode() == storeOrder.getPayStatus()) { // 订单已取消，客户却付款了，启动退款流程
+            RefundPayVo refundPayVo = new RefundPayVo();
+            refundPayVo.setOut_trade_no(storeOrder.getOrderNo());
+            refundPayVo.setRefund_amount(payPrice);
+
+            // 退款请求，发送MQ
+            Message message = MessageBuilder.withPayload(JSON.toJSONString(refundPayVo)).build();
+            rocketMQTemplate.syncSend("order-refundpay-topic", message);
         }
     }
 
@@ -235,6 +240,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     }
 
     /**
+     * 获取超过5分钟未支付的订单
+     */
+    @Override
+    public List<StoreOrder> getNotPayOrder() {
+        return orderMapper.getNotPayOrder();
+    }
+
+    /**
      * 关闭订单
      * or
      * 订单逾期未付款，执行关闭处理
@@ -245,8 +258,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     public void orderCloseHandle(String msg) throws AlipayApiException {
         String orderNo = msg;
 
-        RLock rLock = redissonClient.getLock(orderNo);
-        rLock.lock(10, TimeUnit.SECONDS);
+        RLock rlock = redissonClient.getLock(orderNo);
+        rlock.lock(20, TimeUnit.SECONDS);
 
         // 对订单号加锁，防止并发的支付问题
         try {
@@ -272,7 +285,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
             e.printStackTrace();
             throw e;
         } finally {
-            rLock.unlock();
+            rlock.unlock();
         }
     }
 

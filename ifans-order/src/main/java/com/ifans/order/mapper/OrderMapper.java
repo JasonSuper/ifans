@@ -17,4 +17,6 @@ public interface OrderMapper extends BaseMapper<StoreOrder> {
     IPage<StoreOrderVo> pageList(Page page, @Param("status") int status, @Param("userId") String userId);
 
     List<StoreOrderItem> searchOrderItemsByOrderId(String id);
+
+    List<StoreOrder> getNotPayOrder();
 }

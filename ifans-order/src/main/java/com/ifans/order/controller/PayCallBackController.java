@@ -3,7 +3,7 @@ package com.ifans.order.controller;
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.ifans.order.conf.AlipayTemplate;
+import com.ifans.order.pay.AliPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.ifans.order.vo.PayAsyncVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class PayCallBackController {
 
     @Autowired
-    private AlipayTemplate alipayTemplate;
+    private AliPayTemplate alipayTemplate;
 
     @Autowired
     private OrderService orderService;
