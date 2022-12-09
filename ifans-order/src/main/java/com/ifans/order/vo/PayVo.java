@@ -23,4 +23,9 @@ public class PayVo {
 	 * 商品描述 可空
 	 */
 	private String body;
+
+	/**
+	 * 用户发起支付的IP地址
+	 */
+	private String clientip;
 }

@@ -5,6 +5,7 @@ import com.ifans.api.order.domain.StoreOrder;
 import com.ifans.common.core.utils.StringUtils;
 import com.ifans.order.enums.OrderStatusEnum;
 import com.ifans.order.pay.AliPayTemplate;
+import com.ifans.order.pay.YzfPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.ifans.order.vo.RefundPayVo;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
@@ -41,8 +42,10 @@ public class OrderRefundPayListener implements RocketMQListener<MessageExt>, Roc
 
     @Autowired
     private OrderService orderService;
+    //@Autowired
+    //private AliPayTemplate alipayTemplate;
     @Autowired
-    private AliPayTemplate alipayTemplate;
+    private YzfPayTemplate yzfPayTemplate;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -58,7 +61,8 @@ public class OrderRefundPayListener implements RocketMQListener<MessageExt>, Roc
             lock.lock(20, TimeUnit.SECONDS); // 加锁避免并发操作，例如：在取消支付的时候，其他微服务并发进行支付、修改订单等操作
             try {
                 // 退款失败如何处理
-                String result = alipayTemplate.refundpay(refundPayVo);
+                //String result = alipayTemplate.refundpay(refundPayVo);
+                String result = yzfPayTemplate.refundpay(refundPayVo);
                 if (StringUtils.isNotEmpty(result)) { // 退款成功返回值不为null
                     if (storeOrder.getPayStatus() == OrderStatusEnum.CANCLED.getCode()) {
 

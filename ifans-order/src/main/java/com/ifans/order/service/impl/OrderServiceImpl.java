@@ -19,12 +19,12 @@ import com.ifans.order.controller.OrderController;
 import com.ifans.order.enums.OrderStatusEnum;
 import com.ifans.order.mapper.OrderItemMapper;
 import com.ifans.order.mapper.OrderMapper;
-import com.ifans.order.pay.AliPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.ifans.order.service.PaymentInfoService;
 import com.ifans.order.vo.CreateOrderVo;
-import com.ifans.order.vo.PayAsyncVo;
+import com.ifans.order.vo.AliPayAsyncVo;
 import com.ifans.order.vo.RefundPayVo;
+import com.ifans.order.vo.YzfPayAsyncVo;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -53,8 +53,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     private RocketMQTemplate rocketMQTemplate;
     @Autowired
     private RedisTemplate redisTemplate;
-    @Autowired
-    private AliPayTemplate alipayTemplate;
+    //@Autowired
+    //private AliPayTemplate alipayTemplate;
     @Autowired
     private RedissonClient redissonClient;
     @Autowired
@@ -146,7 +146,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     }
 
     @Override
-    public IPage<StoreOrderVo> pageList(Page page, int status) {
+    public IPage<StoreOrderVo> pageList(IPage<?> page, int status) {
         IPage<StoreOrderVo> orderVoListPage = orderMapper.pageList(page, status, SecurityUtils.getUserId());
         List<StoreOrderVo> storeOrderVoList = orderVoListPage.getRecords();
         storeOrderVoList.stream().forEach(item -> {
@@ -161,7 +161,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String handlePayResult(PayAsyncVo vo) {
+    public String handlePayResult(AliPayAsyncVo vo) {
         String orderNo = vo.getOut_trade_no();
         RLock rlock = redissonClient.getLock(orderNo);
         rlock.lock(20, TimeUnit.SECONDS);
@@ -191,6 +191,50 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
                 // 2.修改订单状态信息
                 if (vo.getTrade_status().equals("TRADE_SUCCESS") || vo.getTrade_status().equals("TRADE_FINISHED")) {
                     orderHandle(vo.getGmt_payment(), vo.getBuyer_pay_amount(), storeOrder);
+                }
+            }
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "fail";
+        } finally {
+            rlock.unlock();
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String handlePayResult(YzfPayAsyncVo vo) {
+        String orderNo = vo.getOut_trade_no();
+        RLock rlock = redissonClient.getLock(orderNo);
+        rlock.lock(20, TimeUnit.SECONDS);
+
+        // 加锁防止并发保存订单状态以及并发的支付问题
+        // 支付宝的异步回调和同步回调，都会调用这个方法生成账单流水
+        // 需要做好幂等性
+        try {
+            StoreOrderPaymentInfo payHis = paymentInfoService.findByOrderNo(orderNo);
+            if (payHis == null) {
+                StoreOrder storeOrder = orderMapper.selectByOrderNo(orderNo);
+
+                // 1.保存交易流水
+                StoreOrderPaymentInfo paymentInfo = new StoreOrderPaymentInfo();
+                paymentInfo.setOrderId(storeOrder.getId());
+                paymentInfo.setOrderNo(vo.getOut_trade_no());
+                paymentInfo.setAlipayTradeNo(vo.getTrade_no());
+                paymentInfo.setTotalAmount(new BigDecimal(vo.getMoney()));
+                paymentInfo.setPaySubject(vo.getName());
+                paymentInfo.setPaymentStatus(vo.getTrade_status());
+                paymentInfo.setCreateTime(new Date());
+                paymentInfo.setConfirmTime(new Date());
+                paymentInfo.setCallbackContent(JSON.toJSONString(vo));
+                paymentInfo.setCallbackTime(new Date());
+                paymentInfoService.save(paymentInfo);
+
+                // 2.修改订单状态信息
+                if (vo.getTrade_status().equals("TRADE_SUCCESS")) {
+                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    orderHandle(sf.format(new Date()), vo.getMoney(), storeOrder);
                 }
             }
             return "success";
@@ -279,12 +323,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
                 orderMapper.updateById(storeOrder);
                 //orderMapper.updateOrderPayStatus(orderNo, OrderStatusEnum.CANCLED.getCode().toString());
                 // 关闭支付宝交易
-                alipayTemplate.closepay(orderNo);
+                //alipayTemplate.closepay(orderNo);
             }
-        } catch (AlipayApiException e) {
+        } /*catch (AlipayApiException e) {
             e.printStackTrace();
             throw e;
-        } finally {
+        }*/ finally {
             rlock.unlock();
         }
     }

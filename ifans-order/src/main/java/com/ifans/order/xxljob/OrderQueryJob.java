@@ -3,7 +3,7 @@ package com.ifans.order.xxljob;
 import com.alibaba.fastjson2.JSONObject;
 import com.ifans.api.order.domain.StoreOrder;
 import com.ifans.common.core.utils.StringUtils;
-import com.ifans.order.pay.AliPayTemplate;
+import com.ifans.order.pay.YzfPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.redisson.api.RLock;
@@ -24,8 +24,10 @@ public class OrderQueryJob {
 
     @Autowired
     private OrderService orderService;
+    //@Autowired
+    //private AliPayTemplate alipayTemplate;
     @Autowired
-    private AliPayTemplate alipayTemplate;
+    private YzfPayTemplate yzfPayTemplate;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -34,7 +36,7 @@ public class OrderQueryJob {
     /**
      * 统一收单交易查询
      */
-    @XxlJob("orderQueryJob")
+    /*@XxlJob("orderQueryJob")
     public void orderQueryJob() {
         //System.out.println("定时查单执行");
         List<StoreOrder> orderList = orderService.getNotPayOrder();
@@ -50,6 +52,33 @@ public class OrderQueryJob {
                         jo = jo.getJSONObject("alipay_trade_query_response");
                         if (jo.getString("trade_status").equals("TRADE_SUCCESS") || jo.getString("trade_status").equals("TRADE_FINISHED")) {
                             orderService.orderHandle(jo.getString("send_pay_date"), jo.getString("total_amount"), order);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    lock.unlock();
+                }
+            });
+        });
+    }*/
+
+    @XxlJob("orderQueryJob")
+    public void orderQueryJob() {
+        //System.out.println("定时查单执行");
+        List<StoreOrder> orderList = orderService.getNotPayOrder();
+        //List<StoreOrder> orderList = orderService.list();
+        orderList.stream().forEach(order -> {
+            executor.execute(() -> {
+                RLock lock = redissonClient.getLock(order.getOrderNo());
+                lock.lock(20, TimeUnit.SECONDS);
+                try {
+                    System.out.println("检测到订单：" + order.getOrderNo() + "未支付，即将收单交易查询");
+                    String result = yzfPayTemplate.querypay(order.getOrderNo());
+                    if (StringUtils.isNotEmpty(result)) {
+                        JSONObject jo = JSONObject.parseObject(result);
+                        if (jo.getInteger("status") == 1) {
+                            orderService.orderHandle(jo.getString("endtime"), jo.getString("money"), order);
                         }
                     }
                 } catch (Exception e) {

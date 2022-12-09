@@ -18,6 +18,7 @@ import com.ifans.common.core.utils.StringUtils;
 import com.ifans.common.core.web.domain.AjaxResult;
 import com.ifans.order.enums.OrderStatusEnum;
 import com.ifans.order.pay.AliPayTemplate;
+import com.ifans.order.pay.YzfPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.ifans.order.vo.CreateOrderVo;
 import com.ifans.order.vo.PayVo;
@@ -36,8 +37,10 @@ import java.util.concurrent.TimeUnit;
 @RestController
 public class OrderController {
 
+    //@Autowired
+    //private AliPayTemplate alipayTemplate;
     @Autowired
-    private AliPayTemplate alipayTemplate;
+    private YzfPayTemplate yzfPayTemplate;
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -112,8 +115,8 @@ public class OrderController {
         }
     }
 
-    @PostMapping(value = "/pay", produces = "text/html")
-    public String pay(@RequestBody Map<String, String> params) throws Exception {
+    @PostMapping(value = "/pay")
+    public R pay(@RequestBody Map<String, String> params) throws Exception {
         if (params.get("orderId") == null || StringUtils.isEmpty(params.get("orderId"))) {
             throw new Exception("参数错误");
         }
@@ -124,7 +127,9 @@ public class OrderController {
         // 加锁避免并发操作，例如：在支付的时候，其他微服务并发进行取消、修改订单等操作
         lock.lock(20, TimeUnit.SECONDS);
         try {
-            order.setPayType(1); // 默认支付宝支付
+            Map<String, Object> result = new HashMap<>();
+
+            order.setPayType(5); // 默认易支付支付
             orderService.updateById(order);
 
             if (order != null && OrderStatusEnum.CREATE_NEW.getCode() == order.getPayStatus()) {
@@ -135,10 +140,17 @@ public class OrderController {
                 payVo.setTotal_amount(order.getMustPrice().toString()); // 付款金额
                 payVo.setBody(""); //商品描述 可空
 
-                String payPage = alipayTemplate.pay(payVo);
-                return payPage;
+                //String payPage = alipayTemplate.pay(payVo);
+                String payPage = yzfPayTemplate.payApi(payVo);
+
+                result.put("payPage", payPage);
+                result.put("code", "200");
+                result.put("msg", "成功");
+                return R.ok(result);
             } else {
-                throw new Exception("订单不能支付");
+                result.put("code", "500");
+                result.put("msg", "订单已支付，请勿重复操作");
+                return R.ok(result);
             }
         } finally {
             lock.unlock();
@@ -163,7 +175,7 @@ public class OrderController {
             if (order.getPayStatus() == OrderStatusEnum.CREATE_NEW.getCode()) {
                 isClose = switch (order.getPayType()) {
                     case 1:
-                        yield alipayTemplate.closepay(orderNo);
+                        //yield alipayTemplate.closepay(orderNo);
                     default:
                         yield true;
                 };
@@ -250,102 +262,5 @@ public class OrderController {
         String c = HexUtil.encodeHexStr(b);
         System.out.println(c.length());
         System.out.println(Integer.toBinaryString(a));*/
-
-        String key = "e3L3k8f3QWLt2V8mK983EeJLTqEv1jq2";
-
-        //参数存入 map
-        Map<String, String> param = new HashMap<>();
-        param.put("pid", "1315");
-        param.put("type", "alipay");
-        param.put("out_trade_no", "1");
-        param.put("notify_url", "http://www.pay.com/notify_url.php");
-        param.put("return_url", "http://www.pay.com/return_url.php");
-        param.put("name", "会员");
-        param.put("money", "1.00");
-
-        //参数排序，不能urlEncode和转小写
-        String s = formatUrlMap(param,false,false);
-        //加密生成签名
-        String sign = DigestUtils.md5Hex(s+key);
-
-        //跳转支付的url地址
-        String s1 = "https://juea.cn/submit.php?" + s + "&sign="+sign+"&sign_type=MD5";
-        System.out.println(s1);
-
-        //根据key升序排序
-        /*sign = sortByKey(sign);
-
-        String signStr = "";
-
-        //遍历map 转成字符串
-        for (Map.Entry<String, String> m : sign.entrySet()) {
-            signStr += m.getKey() + "=" + m.getValue() + "&";
-        }
-
-        //去掉最后一个 &
-        signStr = signStr.substring(0, signStr.length() - 1);
-
-        //最后拼接上KEY
-        signStr += key;
-
-        //转为MD5
-        signStr = DigestUtils.md5DigestAsHex(signStr.getBytes());
-        System.out.println(signStr);*/
-    }
-
-    public static <K extends Comparable<? super K>, V> Map<K, V> sortByKey(Map<K, V> map) {
-        Map<K, V> result = new LinkedHashMap<>();
-
-        map.entrySet().stream()
-                .sorted(Map.Entry.<K, V>comparingByKey()).forEachOrdered(e -> result.put(e.getKey(), e.getValue()));
-        return result;
-    }
-
-    /**
-     * 方法用途: 对所有传入参数按照字段名的Unicode码从小到大排序（字典序），并且生成url参数串<br>
-     * 实现步骤: <br>
-     *
-     * @param paraMap    要排序的Map对象
-     * @param urlEncode  是否需要URLENCODE
-     * @param keyToLower 是否需要将Key转换为全小写。true:key转化成小写，false:不转化
-     * @return
-     */
-    public static String formatUrlMap(Map<String, String> paraMap, boolean urlEncode, boolean keyToLower) {
-        String buff = "";
-        Map<String, String> tmpMap = paraMap;
-        try {
-            List<Map.Entry<String, String>> infoIds = new ArrayList<Map.Entry<String, String>>(tmpMap.entrySet());
-// 对所有传入参数按照字段名的 ASCII 码从小到大排序（字典序）
-            Collections.sort(infoIds, new Comparator<Map.Entry<String, String>>() {
-                @Override
-                public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
-                    return (o1.getKey()).toString().compareTo(o2.getKey());
-                }
-            });
-// 构造URL 键值对的格式
-            StringBuilder buf = new StringBuilder();
-            for (Map.Entry<String, String> item : infoIds) {
-                if (StringUtils.isNotBlank(item.getKey())) {
-                    String key = item.getKey();
-                    String val = item.getValue();
-                    if (urlEncode) {
-                        val = URLEncoder.encode(val, "utf-8");
-                    }
-                    if (keyToLower) {
-                        buf.append(key.toLowerCase() + "=" + val);
-                    } else {
-                        buf.append(key + "=" + val);
-                    }
-                    buf.append("&");
-                }
-            }
-            buff = buf.toString();
-            if (buff.isEmpty() == false) {
-                buff = buff.substring(0, buff.length() - 1);
-            }
-        } catch (Exception e) {
-            return null;
-        }
-        return buff;
     }
 }

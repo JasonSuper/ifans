@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ifans.api.order.domain.StoreOrder;
 import com.ifans.api.order.vo.StoreOrderVo;
 import com.ifans.order.vo.CreateOrderVo;
-import com.ifans.order.vo.PayAsyncVo;
+import com.ifans.order.vo.AliPayAsyncVo;
+import com.ifans.order.vo.YzfPayAsyncVo;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.util.List;
@@ -33,12 +35,14 @@ public interface OrderService extends IService<StoreOrder> {
      */
     StoreOrder searchLastExistOrder(CreateOrderVo createOrderVo);
 
-    IPage<StoreOrderVo> pageList(Page page, int status);
+    IPage<StoreOrderVo> pageList(IPage<?> page, int status);
 
     /**
      * 支付成功回调 订单处理
      */
-    String handlePayResult(PayAsyncVo vo);
+    String handlePayResult(AliPayAsyncVo vo);
+
+    String handlePayResult(YzfPayAsyncVo vo);
 
     void orderHandle(String paytimeStr, String payPrice, StoreOrder storeOrder) throws ParseException;
 

@@ -6,7 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 @Data
-public class PayAsyncVo {
+public class AliPayAsyncVo {
 
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Date gmt_create;
