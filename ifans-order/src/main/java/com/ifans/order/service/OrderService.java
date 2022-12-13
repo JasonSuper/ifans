@@ -42,7 +42,7 @@ public interface OrderService extends IService<StoreOrder> {
      */
     String handlePayResult(AliPayAsyncVo vo);
 
-    String handlePayResult(YzfPayAsyncVo vo);
+    //String handlePayResult(YzfPayAsyncVo vo);
 
     void orderHandle(String paytimeStr, String payPrice, StoreOrder storeOrder) throws ParseException;
 

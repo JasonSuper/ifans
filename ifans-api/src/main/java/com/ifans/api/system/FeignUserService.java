@@ -1,6 +1,7 @@
 package com.ifans.api.system;
 
 import com.ifans.api.system.domain.SysUser;
+import com.ifans.api.system.domain.UserGoodsBag;
 import com.ifans.api.system.fallback.FeignUserFallbackFactory;
 import com.ifans.api.system.model.LoginUser;
 import com.ifans.common.core.constant.SecurityConstants;
@@ -31,4 +32,16 @@ public interface FeignUserService {
      */
     @PostMapping("/user/register")
     R<Boolean> registerUserInfo(@RequestBody SysUser sysUser, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+
+    /**
+     * 获取当前用户道具
+     */
+    @GetMapping("/userGoods/bag/{userId}")
+    R<UserGoodsBag> bag(@PathVariable("userId") String userId, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+
+    /**
+     * 添加当前用户道具
+     */
+    @PostMapping("/userGoods/add")
+    R add(@RequestBody UserGoodsBag userGoodsBag, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
 }

@@ -13,12 +13,15 @@ import com.ifans.api.order.vo.StoreOrderVo;
 import com.ifans.api.snowflake.FeignSnowFlake;
 import com.ifans.api.store.FeignStoreService;
 import com.ifans.api.store.domain.StoreGoods;
+import com.ifans.api.system.FeignUserService;
+import com.ifans.common.core.constant.SecurityConstants;
 import com.ifans.common.core.utils.SecurityUtils;
 import com.ifans.common.core.web.domain.AjaxResult;
 import com.ifans.order.controller.OrderController;
 import com.ifans.order.enums.OrderStatusEnum;
 import com.ifans.order.mapper.OrderItemMapper;
 import com.ifans.order.mapper.OrderMapper;
+import com.ifans.order.pay.AliPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.ifans.order.service.PaymentInfoService;
 import com.ifans.order.vo.CreateOrderVo;
@@ -53,8 +56,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     private RocketMQTemplate rocketMQTemplate;
     @Autowired
     private RedisTemplate redisTemplate;
-    //@Autowired
-    //private AliPayTemplate alipayTemplate;
+    @Autowired
+    private AliPayTemplate alipayTemplate;
     @Autowired
     private RedissonClient redissonClient;
     @Autowired
@@ -65,6 +68,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     private FeignSnowFlake feignSnowFlake;
     @Autowired
     private FeignStoreService feignStoreService;
+    @Autowired
+    private FeignUserService feignUserService;
     @Autowired
     private PaymentInfoService paymentInfoService;
 
@@ -202,7 +207,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
         }
     }
 
-    @Override
+    /*@Override
     @Transactional(rollbackFor = Exception.class)
     public String handlePayResult(YzfPayAsyncVo vo) {
         String orderNo = vo.getOut_trade_no();
@@ -244,7 +249,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
         } finally {
             rlock.unlock();
         }
-    }
+    }*/
 
     @Override
     public void orderHandle(String paytimeStr, String payPrice, StoreOrder storeOrder) throws ParseException {
@@ -259,6 +264,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
 
             // 支付成功
             orderMapper.updateById(storeOrder);
+
+            // 添加当前用户购买的道具
+            //feignUserService.add(null, SecurityConstants.INNER);
+
             // 清除redis缓存
             cleanOrderRedis(storeOrder.getId(), storeOrder.getUserId());
 
@@ -266,10 +275,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
             RefundPayVo refundPayVo = new RefundPayVo();
             refundPayVo.setOut_trade_no(storeOrder.getOrderNo());
             refundPayVo.setRefund_amount(payPrice);
+            refundPayVo.setRefund_reason("订单已取消");
 
             // 退款请求，发送MQ
             Message message = MessageBuilder.withPayload(JSON.toJSONString(refundPayVo)).build();
-            rocketMQTemplate.syncSend("order-refundpay-topic", message);
+            rocketMQTemplate.syncSend("order-refundpay-topic", message, 30000, 3);
         }
     }
 

@@ -105,6 +105,6 @@ yzf:
   pid: 1315
   key: e3L3k8f3QWLt2V8mK983EeJLTqEv1jq2
   # 步回调通知 这个来感应订单是否完成
-  notify_url: https://v1p5426743.yicp.fun/order/payCallBack/yzfpay
+  notify_url: https://v1p5426743.yicp.fun/order/payCallBack/alipay
   return_url: http://192.168.1.19:8001/store/order/payCallBack
   timeout: 30m

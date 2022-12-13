@@ -134,7 +134,7 @@ public class AliPayTemplate {
     /**
      * 交易退款
      */
-    public String refundpay(RefundPayVo vo) throws AlipayApiException {
+    public AlipayTradeRefundResponse refundpay(RefundPayVo vo) throws AlipayApiException {
         AlipayClient alipayClient = new DefaultAlipayClient(gatewayUrl, app_id, merchant_private_key, "json", charset, alipay_public_key, sign_type);
         AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
         JSONObject bizContent = new JSONObject();
@@ -151,10 +151,9 @@ public class AliPayTemplate {
         AlipayTradeRefundResponse response = alipayClient.execute(request);
         if(response.isSuccess()){
             System.out.println("交易退款，调用成功，返回结果：" + response.getBody());
-            return response.getBody();
         } else {
             System.out.println("交易退款，调用失败，返回码：" + response.getCode() + "，返回描述：" + response.getMsg());
-            return null;
         }
+        return response;
     }
 }

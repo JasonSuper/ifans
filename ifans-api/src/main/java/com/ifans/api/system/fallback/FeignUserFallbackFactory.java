@@ -2,6 +2,7 @@ package com.ifans.api.system.fallback;
 
 import com.ifans.api.system.FeignUserService;
 import com.ifans.api.system.domain.SysUser;
+import com.ifans.api.system.domain.UserGoodsBag;
 import com.ifans.api.system.model.LoginUser;
 import com.ifans.common.core.domain.R;
 import org.slf4j.Logger;
@@ -25,6 +26,17 @@ public class FeignUserFallbackFactory implements FallbackFactory<FeignUserServic
             @Override
             public R<Boolean> registerUserInfo(SysUser sysUser, String source) {
                 return R.fail("注册用户失败:" + throwable.getMessage());
+            }
+
+            @Override
+            public R<UserGoodsBag> bag(String userId, String source) {
+                System.out.println("获取用户背包失败：" + throwable.getMessage());
+                return R.fail(null);
+            }
+
+            @Override
+            public R add(UserGoodsBag userGoodsBag, String source) {
+                return R.fail("添加当前用户道具失败");
             }
         };
     }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifans.order.mapper.RefundinfoMapper">
+
+    <select id="findByOrderNo" parameterType="java.lang.String" resultType="com.ifans.api.order.domain.StoreOrderRefundinfo">
+        select * from store_order_refundinfo
+        where order_no = #{orderNo}
+    </select>
+</mapper>

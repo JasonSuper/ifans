@@ -3,6 +3,7 @@ package com.ifans.order.xxljob;
 import com.alibaba.fastjson2.JSONObject;
 import com.ifans.api.order.domain.StoreOrder;
 import com.ifans.common.core.utils.StringUtils;
+import com.ifans.order.pay.AliPayTemplate;
 import com.ifans.order.pay.YzfPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.xxl.job.core.handler.annotation.XxlJob;
@@ -24,10 +25,10 @@ public class OrderQueryJob {
 
     @Autowired
     private OrderService orderService;
-    //@Autowired
-    //private AliPayTemplate alipayTemplate;
     @Autowired
-    private YzfPayTemplate yzfPayTemplate;
+    private AliPayTemplate alipayTemplate;
+    //@Autowired
+    //private YzfPayTemplate yzfPayTemplate;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -36,7 +37,7 @@ public class OrderQueryJob {
     /**
      * 统一收单交易查询
      */
-    /*@XxlJob("orderQueryJob")
+    @XxlJob("orderQueryJob")
     public void orderQueryJob() {
         //System.out.println("定时查单执行");
         List<StoreOrder> orderList = orderService.getNotPayOrder();
@@ -61,9 +62,9 @@ public class OrderQueryJob {
                 }
             });
         });
-    }*/
+    }
 
-    @XxlJob("orderQueryJob")
+    /*@XxlJob("orderQueryJob")
     public void orderQueryJob() {
         //System.out.println("定时查单执行");
         List<StoreOrder> orderList = orderService.getNotPayOrder();
@@ -88,5 +89,5 @@ public class OrderQueryJob {
                 }
             });
         });
-    }
+    }*/
 }

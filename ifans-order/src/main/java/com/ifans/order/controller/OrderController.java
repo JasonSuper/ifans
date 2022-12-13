@@ -37,10 +37,10 @@ import java.util.concurrent.TimeUnit;
 @RestController
 public class OrderController {
 
-    //@Autowired
-    //private AliPayTemplate alipayTemplate;
     @Autowired
-    private YzfPayTemplate yzfPayTemplate;
+    private AliPayTemplate alipayTemplate;
+    //@Autowired
+    //private YzfPayTemplate yzfPayTemplate;
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -140,8 +140,8 @@ public class OrderController {
                 payVo.setTotal_amount(order.getMustPrice().toString()); // 付款金额
                 payVo.setBody(""); //商品描述 可空
 
-                //String payPage = alipayTemplate.pay(payVo);
-                String payPage = yzfPayTemplate.payApi(payVo);
+                String payPage = alipayTemplate.pay(payVo);
+                //String payPage = yzfPayTemplate.payApi(payVo);
 
                 result.put("payPage", payPage);
                 result.put("code", "200");
