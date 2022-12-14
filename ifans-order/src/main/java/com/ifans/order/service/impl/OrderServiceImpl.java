@@ -4,17 +4,19 @@ import com.alibaba.fastjson2.JSON;
 import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ifans.api.order.domain.StoreOrder;
 import com.ifans.api.order.domain.StoreOrderItem;
 import com.ifans.api.order.domain.StoreOrderPaymentInfo;
 import com.ifans.api.order.vo.StoreOrderVo;
+import com.ifans.api.rank.FeignRankService;
+import com.ifans.api.rank.domain.UserGoodsBag;
+import com.ifans.api.rank.domain.UserGoodsBagTurnover;
 import com.ifans.api.snowflake.FeignSnowFlake;
 import com.ifans.api.store.FeignStoreService;
 import com.ifans.api.store.domain.StoreGoods;
-import com.ifans.api.system.FeignUserService;
 import com.ifans.common.core.constant.SecurityConstants;
+import com.ifans.common.core.utils.BeanUtils;
 import com.ifans.common.core.utils.SecurityUtils;
 import com.ifans.common.core.web.domain.AjaxResult;
 import com.ifans.order.controller.OrderController;
@@ -24,13 +26,13 @@ import com.ifans.order.mapper.OrderMapper;
 import com.ifans.order.pay.AliPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.ifans.order.service.PaymentInfoService;
-import com.ifans.order.vo.CreateOrderVo;
 import com.ifans.order.vo.AliPayAsyncVo;
+import com.ifans.order.vo.CreateOrderVo;
 import com.ifans.order.vo.RefundPayVo;
-import com.ifans.order.vo.YzfPayAsyncVo;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -69,7 +71,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     @Autowired
     private FeignStoreService feignStoreService;
     @Autowired
-    private FeignUserService feignUserService;
+    private FeignRankService feignRankService;
     @Autowired
     private PaymentInfoService paymentInfoService;
 
@@ -166,7 +168,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String handlePayResult(AliPayAsyncVo vo) {
+    public String handlePayResult(AliPayAsyncVo vo) throws ParseException {
         String orderNo = vo.getOut_trade_no();
         RLock rlock = redissonClient.getLock(orderNo);
         rlock.lock(20, TimeUnit.SECONDS);
@@ -175,33 +177,32 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
         // 支付宝的异步回调和同步回调，都会调用这个方法生成账单流水
         // 需要做好幂等性
         try {
-            StoreOrderPaymentInfo payHis = paymentInfoService.findByOrderNo(orderNo);
+            /*StoreOrderPaymentInfo payHis = paymentInfoService.findByOrderNo(orderNo);
             if (payHis == null) {
-                StoreOrder storeOrder = orderMapper.selectByOrderNo(orderNo);
 
-                // 1.保存交易流水
-                StoreOrderPaymentInfo paymentInfo = new StoreOrderPaymentInfo();
-                paymentInfo.setOrderId(storeOrder.getId());
-                paymentInfo.setOrderNo(vo.getOut_trade_no());
-                paymentInfo.setAlipayTradeNo(vo.getTrade_no());
-                paymentInfo.setTotalAmount(new BigDecimal(vo.getTotal_amount()));
-                paymentInfo.setPaySubject(vo.getSubject());
-                paymentInfo.setPaymentStatus(vo.getTrade_status());
-                paymentInfo.setCreateTime(vo.getGmt_create());
-                paymentInfo.setConfirmTime(new Date());
-                paymentInfo.setCallbackContent(JSON.toJSONString(vo));
-                paymentInfo.setCallbackTime(vo.getNotify_time());
-                paymentInfoService.save(paymentInfo);
+            }*/
 
-                // 2.修改订单状态信息
-                if (vo.getTrade_status().equals("TRADE_SUCCESS") || vo.getTrade_status().equals("TRADE_FINISHED")) {
-                    orderHandle(vo.getGmt_payment(), vo.getBuyer_pay_amount(), storeOrder);
-                }
+            StoreOrder storeOrder = orderMapper.selectByOrderNo(orderNo);
+
+            // 1.保存交易流水
+            StoreOrderPaymentInfo paymentInfo = new StoreOrderPaymentInfo();
+            paymentInfo.setOrderId(storeOrder.getId());
+            paymentInfo.setOrderNo(vo.getOut_trade_no());
+            paymentInfo.setAlipayTradeNo(vo.getTrade_no());
+            paymentInfo.setTotalAmount(new BigDecimal(vo.getTotal_amount()));
+            paymentInfo.setPaySubject(vo.getSubject());
+            paymentInfo.setPaymentStatus(vo.getTrade_status());
+            paymentInfo.setCreateTime(vo.getGmt_create());
+            paymentInfo.setConfirmTime(new Date());
+            paymentInfo.setCallbackContent(JSON.toJSONString(vo));
+            paymentInfo.setCallbackTime(vo.getNotify_time());
+            paymentInfoService.save(paymentInfo); // 流水表加了唯一索引，如果重复添加，则会抛异常回滚，不会有并发问题
+
+            // 2.修改订单状态信息
+            if (vo.getTrade_status().equals("TRADE_SUCCESS") || vo.getTrade_status().equals("TRADE_FINISHED")) {
+                ((OrderService) AopContext.currentProxy()).orderHandle(vo.getGmt_payment(), vo.getBuyer_pay_amount(), storeOrder);
             }
             return "success";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "fail";
         } finally {
             rlock.unlock();
         }
@@ -252,6 +253,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     }*/
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void orderHandle(String paytimeStr, String payPrice, StoreOrder storeOrder) throws ParseException {
         if (OrderStatusEnum.CREATE_NEW.getCode() == storeOrder.getPayStatus()) {
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -266,7 +268,26 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
             orderMapper.updateById(storeOrder);
 
             // 添加当前用户购买的道具
-            //feignUserService.add(null, SecurityConstants.INNER);
+            /*List<StoreOrderItem> itemList = orderItemMapper.selectByOrderNo(storeOrder.getOrderNo());
+            itemList.stream().forEach(item -> {
+                UserGoodsBagTurnover turnover = new UserGoodsBagTurnover();
+                turnover.setUserId(storeOrder.getUserId());
+                turnover.setGoodsId(item.getGoodsId());
+                turnover.setTotal(item.getNum());
+                turnover.setLsh(item.getId());
+                turnover.setCreateTime(new Date());
+                feignRankService.add(turnover, SecurityConstants.INNER);
+            });*/
+
+            // 获取详细的订单项
+            List<StoreOrderItem> itemList = orderItemMapper.selectByOrderNo(storeOrder.getOrderNo());
+            StoreOrderVo storeOrderVo = new StoreOrderVo();
+            BeanUtils.copyBeanProp(storeOrderVo, storeOrder);
+            storeOrderVo.setStoreOrderItems(itemList);
+
+            // MQ通知rank服务添加当前用户购买的道具
+            Message message = MessageBuilder.withPayload(JSON.toJSONString(storeOrderVo)).build();
+            rocketMQTemplate.syncSend("rank-bag-topic", message);
 
             // 清除redis缓存
             cleanOrderRedis(storeOrder.getId(), storeOrder.getUserId());

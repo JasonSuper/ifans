@@ -2,9 +2,11 @@ package com.ifans.rank.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ifans.common.core.domain.R;
 import com.ifans.common.core.web.domain.AjaxResult;
 import com.ifans.rank.domain.IdolRank;
 import com.ifans.rank.service.IdolRankService;
+import com.ifans.rank.vo.HitCallVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,5 +23,14 @@ public class IdolRankController {
     public AjaxResult list(@RequestBody Page page) {
         IPage<IdolRank> list = idolRankService.pageList(page, 0);
         return AjaxResult.success(list);
+    }
+
+    /**
+     * 打call
+     */
+    @PostMapping("/hitCall")
+    public R hitCall(@RequestBody HitCallVo hitCallVo) {
+        boolean isOk = idolRankService.hitCall(hitCallVo);
+        return null;
     }
 }

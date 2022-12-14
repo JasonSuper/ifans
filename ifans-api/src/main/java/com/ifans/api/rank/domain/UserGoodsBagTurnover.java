@@ -1,4 +1,4 @@
-package com.ifans.api.system.domain;
+package com.ifans.api.rank.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -8,11 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user_goods_bag")
-public class UserGoodsBag {
+@TableName("user_goods_bag_turnover")
+public class UserGoodsBagTurnover {
 
     @TableId(type = IdType.ASSIGN_ID)
     private String id;
@@ -22,6 +24,12 @@ public class UserGoodsBag {
      */
     @TableField("user_id")
     private String userId;
+
+    /**
+     * 流水号
+     */
+    @TableField("lsh")
+    private String lsh;
 
     /**
      * 道具id
@@ -34,4 +42,10 @@ public class UserGoodsBag {
      */
     @TableField("total")
     private int total;
+
+    /**
+     * 添加时间
+     */
+    @TableField("create_time")
+    private Date createTime;
 }

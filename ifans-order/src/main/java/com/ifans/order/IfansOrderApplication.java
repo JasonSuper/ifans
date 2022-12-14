@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * 订单服务启动程序
@@ -13,6 +14,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  */
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = "com.ifans")
+@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 @MapperScan(value = {"com.ifans.order.**.mapper*"})
 @SpringBootApplication(scanBasePackages = {"com.ifans"})
 public class IfansOrderApplication {

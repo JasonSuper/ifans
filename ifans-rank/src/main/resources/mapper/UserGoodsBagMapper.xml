@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifans.rank.mapper.UserGoodsBagMapper">
+
+    <select id="selectByUserId" parameterType="java.lang.String" resultType="com.ifans.api.rank.vo.UserGoodsBagVo">
+        select * from user_goods_bag ugb
+        left join store_goods sg on sg.id = ugb.goods_id
+        where user_id = #{userid}
+    </select>
+
+    <insert id="addOrUpdate" parameterType="com.ifans.api.rank.domain.UserGoodsBag">
+        INSERT into user_goods_bag (user_id, goods_id, total)
+        VALUES (#{userId}, #{goodsId}, #{total})
+        ON DUPLICATE KEY UPDATE
+            total = total + #{total}
+    </insert>
+</mapper>

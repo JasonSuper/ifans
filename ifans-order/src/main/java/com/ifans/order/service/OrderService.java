@@ -40,7 +40,7 @@ public interface OrderService extends IService<StoreOrder> {
     /**
      * 支付成功回调 订单处理
      */
-    String handlePayResult(AliPayAsyncVo vo);
+    String handlePayResult(AliPayAsyncVo vo) throws ParseException;
 
     //String handlePayResult(YzfPayAsyncVo vo);
 
