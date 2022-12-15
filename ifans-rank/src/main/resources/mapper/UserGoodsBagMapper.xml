@@ -5,9 +5,12 @@
 <mapper namespace="com.ifans.rank.mapper.UserGoodsBagMapper">
 
     <select id="selectByUserId" parameterType="java.lang.String" resultType="com.ifans.api.rank.vo.UserGoodsBagVo">
-        select * from user_goods_bag ugb
-        left join store_goods sg on sg.id = ugb.goods_id
-        where user_id = #{userid}
+        select sg.*, ugb.user_id, ugb.goods_id, IFNULL(ugb.total, 0) total, ugb.version from store_goods sg
+        left join (select * from user_goods_bag
+            where user_id = #{userid}
+        ) ugb on ugb.goods_id = sg.id
+        where del_flag = '0'
+          and status= '0'
     </select>
 
     <insert id="addOrUpdate" parameterType="com.ifans.api.rank.domain.UserGoodsBag">
@@ -16,4 +19,12 @@
         ON DUPLICATE KEY UPDATE
             total = total + #{total}
     </insert>
+
+    <update id="updateUserGoodsTotal" parameterType="com.ifans.rank.vo.HitCallVo">
+        update user_goods_bag set total = #{newTotal}, version = version + 1
+        where user_id = #{userId}
+          and goods_id = #{goodsId}
+          and total = #{oldTotal}
+          and version =#{version}
+    </update>
 </mapper>

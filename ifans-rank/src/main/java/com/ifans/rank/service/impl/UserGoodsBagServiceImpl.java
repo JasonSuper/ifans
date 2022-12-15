@@ -10,6 +10,7 @@ import com.ifans.common.core.utils.BeanUtils;
 import com.ifans.rank.mapper.UserGoodsBagMapper;
 import com.ifans.rank.mapper.UserGoodsBagTurnoverMapper;
 import com.ifans.rank.service.UserGoodsBagService;
+import com.ifans.rank.vo.HitCallVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,10 +51,10 @@ public class UserGoodsBagServiceImpl extends ServiceImpl<UserGoodsBagMapper, Use
         List<StoreOrderItem> itemList = storeOrderVo.getStoreOrderItems();
         itemList.stream().forEach(item -> {
             UserGoodsBagTurnover turnover = new UserGoodsBagTurnover();
+            turnover.setLsh(item.getId());
             turnover.setUserId(storeOrderVo.getUserId());
             turnover.setGoodsId(item.getGoodsId());
             turnover.setTotal(item.getNum());
-            turnover.setLsh(item.getId());
             turnover.setCreateTime(new Date());
 
             // 添加流水记录
@@ -66,5 +67,10 @@ public class UserGoodsBagServiceImpl extends ServiceImpl<UserGoodsBagMapper, Use
             // 添加用户背包道具
             userGoodsBagMapper.addOrUpdate(userGoodsBag);
         });
+    }
+
+    @Override
+    public int updateUserGoodsTotal(HitCallVo hitCallVo) {
+        return userGoodsBagMapper.updateUserGoodsTotal(hitCallVo);
     }
 }

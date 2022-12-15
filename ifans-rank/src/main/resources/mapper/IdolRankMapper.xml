@@ -6,4 +6,9 @@
         SELECT * FROM idol_rank
         order by rank_hot desc
     </select>
+
+    <update id="upRankHot">
+        update idol_rank set rank_hot = rank_hot + #{hot}
+        where id = #{idolId}
+    </update>
 </mapper>

@@ -34,4 +34,10 @@ public class UserGoodsBag {
      */
     @TableField("total")
     private int total;
+
+    /**
+     * 版本号
+     */
+    @TableField("version")
+    private int version;
 }
