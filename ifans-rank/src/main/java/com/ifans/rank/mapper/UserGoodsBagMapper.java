@@ -14,4 +14,6 @@ public interface UserGoodsBagMapper extends BaseMapper<UserGoodsBag> {
     int addOrUpdate(UserGoodsBag userGoodsBag);
 
     int updateUserGoodsTotal(HitCallVo hitCallVo);
+
+    UserGoodsBag searchUserGoods(HitCallVo hitCallVo);
 }

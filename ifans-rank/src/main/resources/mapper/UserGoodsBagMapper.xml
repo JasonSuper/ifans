@@ -13,6 +13,13 @@
           and status= '0'
     </select>
 
+    <select id="searchUserGoods" resultType="com.ifans.api.rank.domain.UserGoodsBag">
+        select * from user_goods_bag
+        where user_id = #{userId}
+        and goods_id = #{goodsId}
+        and total <![CDATA[ >= ]]> #{nums}
+    </select>
+
     <insert id="addOrUpdate" parameterType="com.ifans.api.rank.domain.UserGoodsBag">
         INSERT into user_goods_bag (user_id, goods_id, total)
         VALUES (#{userId}, #{goodsId}, #{total})

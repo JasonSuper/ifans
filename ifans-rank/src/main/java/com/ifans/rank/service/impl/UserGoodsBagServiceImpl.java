@@ -1,5 +1,6 @@
 package com.ifans.rank.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ifans.api.order.domain.StoreOrderItem;
 import com.ifans.api.order.vo.StoreOrderVo;
@@ -72,5 +73,10 @@ public class UserGoodsBagServiceImpl extends ServiceImpl<UserGoodsBagMapper, Use
     @Override
     public int updateUserGoodsTotal(HitCallVo hitCallVo) {
         return userGoodsBagMapper.updateUserGoodsTotal(hitCallVo);
+    }
+
+    @Override
+    public UserGoodsBag searchUserGoods(HitCallVo hitCallVo) {
+        return userGoodsBagMapper.searchUserGoods(hitCallVo);
     }
 }

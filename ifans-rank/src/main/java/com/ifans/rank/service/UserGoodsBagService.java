@@ -18,4 +18,6 @@ public interface UserGoodsBagService extends IService<UserGoodsBag> {
     void addGoodsForUser(StoreOrderVo storeOrderVo);
 
     int updateUserGoodsTotal(HitCallVo hitCallVo);
+
+    UserGoodsBag searchUserGoods(HitCallVo hitCallVo);
 }

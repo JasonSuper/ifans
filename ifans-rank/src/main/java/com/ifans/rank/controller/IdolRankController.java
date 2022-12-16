@@ -38,15 +38,12 @@ public class IdolRankController {
     @PostMapping("/hitCall")
     public R hitCall(@RequestBody HitCallVo hitCallVo) {
         hitCallVo.setUserId(SecurityUtils.getUserId());
+
+        // 查询用户要使用的道具，库存状况
+        UserGoodsBag userGoodsBag = userGoodsBagService.searchUserGoods(hitCallVo);
+
         Map<String, Object> result = new HashMap<>();
-
-        LambdaQueryWrapper<UserGoodsBag> query = new LambdaQueryWrapper<>();
-        query.eq(UserGoodsBag::getUserId, SecurityUtils.getUserId())
-                .eq(UserGoodsBag::getGoodsId, hitCallVo.getGoodsId())
-                .ge(UserGoodsBag::getTotal, hitCallVo.getNums());
-        UserGoodsBag userGoodsBag = userGoodsBagService.getOne(query);
-
-        if (userGoodsBag == null) {
+        if (userGoodsBag == null || userGoodsBag.getTotal() - hitCallVo.getNums() < 0) {
             result.put("code", "500");
             result.put("msg", "打Call失败，您的道具数量不足！");
             return R.ok(result);

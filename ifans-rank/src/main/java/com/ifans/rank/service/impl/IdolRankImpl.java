@@ -39,8 +39,9 @@ public class IdolRankImpl extends ServiceImpl<IdolRankMapper, IdolRank> implemen
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int hitCall(HitCallVo hitCallVo) {
+        // 使用cas更新用户道具余额
         int i = userGoodsBagMapper.updateUserGoodsTotal(hitCallVo);
-        if (i > 0) {
+        if (i > 0) { // 明星热度可以忍受适当并发问题，用户没人知道实际的真实热度
             // 获取道具的热度值
             int rankHot = giveMeGoodsRankHot(hitCallVo.getGoodsId());
             // 修改明星热度值
