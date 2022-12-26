@@ -1,6 +1,5 @@
 package com.ifans.common.core.utils;
 
-import com.ifans.common.core.constant.CommonConstant;
 import com.ifans.common.core.constant.SymbolConstant;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -26,6 +25,10 @@ import java.util.regex.Pattern;
 public class oConvertUtils {
     private static final Logger log = LoggerFactory.getLogger(oConvertUtils.class);
 
+    private static final String UNKNOWN = "unknown";
+
+    private static final String STRING_NULL = "null";
+
     public static boolean isEmpty(Object object) {
         if (object == null) {
             return (true);
@@ -33,14 +36,14 @@ public class oConvertUtils {
         if ("".equals(object)) {
             return (true);
         }
-        if (CommonConstant.STRING_NULL.equals(object)) {
+        if (STRING_NULL.equals(object)) {
             return (true);
         }
         return (false);
     }
 
     public static boolean isNotEmpty(Object object) {
-        if (object != null && !"".equals(object) && !object.equals(CommonConstant.STRING_NULL)) {
+        if (object != null && !"".equals(object) && !object.equals(STRING_NULL)) {
             return (true);
         }
         return (false);
@@ -277,13 +280,13 @@ public class oConvertUtils {
      */
     public static String getIpAddrByRequest(HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || CommonConstant.UNKNOWN.equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || CommonConstant.UNKNOWN.equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || CommonConstant.UNKNOWN.equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
         return ip;

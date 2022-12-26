@@ -7,13 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * 订单详细项
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreOrderItem {
+public class StoreOrderItem implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.ASSIGN_ID)
     private String id;

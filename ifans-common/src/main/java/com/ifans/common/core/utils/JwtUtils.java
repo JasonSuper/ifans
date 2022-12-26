@@ -7,12 +7,18 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
  * Jwt工具类
  */
 public class JwtUtils {
+
+    /**
+     * Token有效期为1小时（Token在reids中缓存时间为两倍）
+     */
+    public static final long EXPIRE_TIME = 60 * 60 * 1000;
     public static String secret = TokenConstants.SECRET;
 
     /**
@@ -22,7 +28,8 @@ public class JwtUtils {
      * @return 令牌
      */
     public static String createToken(Map<String, Object> claims) {
-        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).compact();
+        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).setExpiration(date).compact();
         return token;
     }
 
