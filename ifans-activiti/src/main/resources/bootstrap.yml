@@ -1,0 +1,48 @@
+# Tomcat
+server:
+  port: 9211
+
+spring:
+  application:
+    # 应用名称
+    name: ifans-activiti
+  profiles:
+    # 环境配置
+    active: dev
+  nacos:
+    config:
+      enabled: false
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+        namespace: ifans-dev
+      config:
+        # 配置中心地址
+        server-addr: 127.0.0.1:8848
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs:
+          - ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+        username: nacos
+        password: nacos
+        namespace: ifans-dev
+  main:
+    allow-circular-references: true
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.1.19:3306/ifans_activiti?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: root
+
+  activiti:
+    database-schema-update: true
+    history-level: full
+    db-history-used: true
+    deployment-mode: never-fail #关闭SpringAutoDeployment
+    check-process-definitions: true #自动部署，检测processes文件夹，程序启动后会自动生成流程引擎所需表

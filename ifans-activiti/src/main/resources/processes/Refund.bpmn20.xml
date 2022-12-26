@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="Refund" name="Refund" isExecutable="true">
+    <startEvent id="sid-9f7a498e-5d95-4e03-9f0c-ec7fce9a9b62" name="开始退款流程"/>
+    <userTask id="sid-7ea496ac-6a7b-4bc9-bcb8-cab52afa6802" name="填写退款申请" activiti:candidateGroups="guke"/>
+    <userTask id="sid-ea570a62-9fe6-43cf-aca6-c8331f59d5e5" name="管理员审核流程" activiti:candidateGroups="admin"/>
+    <sequenceFlow id="sid-6d410679-5662-440a-8685-a40adde04af3" sourceRef="sid-9f7a498e-5d95-4e03-9f0c-ec7fce9a9b62" targetRef="sid-7ea496ac-6a7b-4bc9-bcb8-cab52afa6802"/>
+    <sequenceFlow id="sid-61044a62-6883-4cfd-888c-acc39e419c4d" sourceRef="sid-7ea496ac-6a7b-4bc9-bcb8-cab52afa6802" targetRef="sid-ea570a62-9fe6-43cf-aca6-c8331f59d5e5"/>
+    <endEvent id="sid-58f2e036-b0b1-4c71-8e4e-5cedb764ed6c" name="结束退款流程"/>
+    <sequenceFlow id="sid-820e8278-1261-4ab2-88d9-785e0a6ac0c3" sourceRef="sid-ea570a62-9fe6-43cf-aca6-c8331f59d5e5" targetRef="sid-58f2e036-b0b1-4c71-8e4e-5cedb764ed6c"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Refund">
+    <bpmndi:BPMNPlane bpmnElement="Refund" id="BPMNPlane_Refund">
+      <bpmndi:BPMNShape id="shape-976453e4-9704-4d8f-bac9-32629ff08585" bpmnElement="sid-9f7a498e-5d95-4e03-9f0c-ec7fce9a9b62">
+        <omgdc:Bounds x="-245.0" y="15.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape-88e0f33a-912d-4c4b-a021-b88115d9f490" bpmnElement="sid-7ea496ac-6a7b-4bc9-bcb8-cab52afa6802">
+        <omgdc:Bounds x="-130.0" y="-10.0" width="100.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape-ca2a34eb-7448-4b9a-acf1-20932085d1ef" bpmnElement="sid-ea570a62-9fe6-43cf-aca6-c8331f59d5e5">
+        <omgdc:Bounds x="25.0" y="-10.0" width="100.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-048ae2d3-66a8-44b2-8287-c3c1c9a8f140" bpmnElement="sid-6d410679-5662-440a-8685-a40adde04af3">
+        <omgdi:waypoint x="-215.0" y="30.0"/>
+        <omgdi:waypoint x="-130.0" y="30.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge-3e1b7b94-279f-4a7e-b1f0-7ea9b0e17213" bpmnElement="sid-61044a62-6883-4cfd-888c-acc39e419c4d">
+        <omgdi:waypoint x="-30.0" y="30.0"/>
+        <omgdi:waypoint x="25.0" y="30.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="shape-631df166-dfb9-4a90-8b36-f170e5ed6911" bpmnElement="sid-58f2e036-b0b1-4c71-8e4e-5cedb764ed6c">
+        <omgdc:Bounds x="185.0" y="15.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-a7ec71bc-05c9-4c78-81e1-3dc19ed9a17d" bpmnElement="sid-820e8278-1261-4ab2-88d9-785e0a6ac0c3">
+        <omgdi:waypoint x="125.0" y="30.0"/>
+        <omgdi:waypoint x="185.0" y="30.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
