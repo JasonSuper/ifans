@@ -1,26 +1,29 @@
 package com.ifans.auth.controller;
 
 import cn.hutool.json.JSONUtil;
+import com.ifans.api.system.fallback.FeignUserFallbackFactory;
 import com.ifans.auth.utils.RequestUtils;
 import com.ifans.common.core.domain.R;
-import com.ifans.common.core.web.domain.AjaxResult;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.KeyPair;
 import java.security.Principal;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/oauth")
+//@Slf4j
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -44,5 +47,17 @@ public class AuthController {
 
         OAuth2AccessToken accessToken = tokenEndpoint.postAccessToken(principal, parameters).getBody();
         return R.ok(accessToken);
+    }
+
+    private final KeyPair keyPair;
+
+    /**
+     * 获取公钥
+     */
+    @GetMapping("/publicKey")
+    public Map<String, Object> getPublicKey() {
+        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+        RSAKey key = new RSAKey.Builder(publicKey).build();
+        return new JWKSet(key).toJSONObject();
     }
 }

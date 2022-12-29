@@ -5,6 +5,7 @@ import com.ifans.auth.service.PreAuthenticatedUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,9 +21,11 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 
 import javax.sql.DataSource;
+import java.security.KeyPair;
 import java.util.*;
 
 /**
@@ -117,12 +120,22 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     /**
+     * 密钥库中获取密钥对(公钥+私钥)
+     */
+    @Bean
+    public KeyPair keyPair() {
+        KeyStoreKeyFactory factory = new KeyStoreKeyFactory(new ClassPathResource("keystore.jks"), "123456".toCharArray());
+        KeyPair keyPair = factory.getKeyPair("keystore", "123456".toCharArray());
+        return keyPair;
+    }
+
+    /**
      * 使用非对称加密算法对token签名
      */
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setSigningKey("ifans-auth-signing");
+        converter.setKeyPair(keyPair());
         return converter;
     }
 

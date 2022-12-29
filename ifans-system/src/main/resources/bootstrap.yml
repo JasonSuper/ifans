@@ -26,6 +26,7 @@ spring:
         # 共享配置
         shared-configs:
           - ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          - ifans-common.yml
         username: nacos
         password: nacos
         namespace: ifans-dev

@@ -27,10 +27,10 @@ public class TokenEnhanceConfig {
             Map<String, Object> additionalInfo = MapUtil.newHashMap();
             if (principal instanceof LoginUserDetails) {
                 LoginUserDetails loginUserDetails = (LoginUserDetails) principal;
-                additionalInfo.put("userId", loginUserDetails.getLoginUser().getUserid());
+                additionalInfo.put("userId", loginUserDetails.getLoginUser().getSysUser().getId());
                 additionalInfo.put("username", loginUserDetails.getUsername());
-                //additionalInfo.put("deptId", loginUserDetails.getDeptId());
-                //additionalInfo.put("dataScope",loginUserDetails.getDataScope());
+                //additionalInfo.put("deptId", "123");
+                //additionalInfo.put("dataScope", "0");
 
                 /**
                  * 系统用户按钮权限标识数据量多存放至redis
@@ -38,7 +38,8 @@ public class TokenEnhanceConfig {
                  * key:AUTH:USER_PERMS:2
                  * value:['sys:user:add',...]
                  */
-                redisTemplate.opsForValue().set("AUTH:USER_PERMS:" + loginUserDetails.getLoginUser().getUserid(), loginUserDetails.getLoginUser().getPermissions());
+                redisTemplate.opsForValue().set("AUTH:USER_PERMS:" + loginUserDetails.getLoginUser().getSysUser().getId(), loginUserDetails.getLoginUser().getPermissions());
+                //redisTemplate.opsForValue().set("AUTH:USER_PERMS:" + loginUserDetails.getLoginUser().getSysUser().getId(), "sys:admin");
 
             }
             ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
