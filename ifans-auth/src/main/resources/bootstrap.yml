@@ -44,6 +44,8 @@ spring:
 #            groupId: DEFAULT_GROUP
 #            data-type: json
 #            rule-type: flow
+#  main:
+#    allow-circular-references: true
 
 feign:
   sentinel:

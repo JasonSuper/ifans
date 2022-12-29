@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 /**
  * 网关鉴权
  */
-@Component
+//@Component
 public class AuthFilter implements GlobalFilter, Ordered {
 
     private static final Logger log = LoggerFactory.getLogger(AuthFilter.class);

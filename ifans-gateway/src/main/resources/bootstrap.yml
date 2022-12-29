@@ -3,7 +3,7 @@ server:
   port: 9200
 
 # Spring
-spring: 
+spring:
   application:
     # 应用名称
     name: ifans-gateway
@@ -44,3 +44,20 @@ spring:
 #            groupId: DEFAULT_GROUP
 #            data-type: json
 #            rule-type: flow
+#  main:
+#    allow-bean-definition-overriding: true
+
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          gateway:
+#            provider: my-provider
+#            client-id: ifans-auth
+#            client-secret: ifans-auth-signing
+#            authorization-grant-type: authorization_code
+#            redirect-uri: "http://192.168.1.19:9200/login/oauth2/code/{registrationId}"
+#            scope: openid, message.read
+#        provider:
+#          my-provider:
+#            issuer-uri: http://192.168.1.19:9204

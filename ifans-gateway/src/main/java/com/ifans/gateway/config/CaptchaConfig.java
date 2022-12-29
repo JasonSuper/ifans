@@ -14,7 +14,7 @@ import static com.google.code.kaptcha.Constants.*;
  *
  * 
  */
-@Configuration
+//@Configuration
 public class CaptchaConfig {
 
     @Bean(name = "captchaProducer")

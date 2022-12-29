@@ -64,7 +64,7 @@ public class DemoApplicationConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
          http
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 禁用session
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 不通过Session获取SecurityContext
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login").anonymous() // 未登录时，可以访问
@@ -74,7 +74,7 @@ public class DemoApplicationConfiguration {
                 .and()
                 .userDetailsService(myUserDetailsService()) // 自定义user数据获取服务
                 //.authenticationProvider() // 自定义认真策略
-                .httpBasic().and().build();
+                .httpBasic();
 
          // 将自定投过滤器置于UsernamePasswordAuthenticationFilter前执行
          //http.addFilterBefore(, UsernamePasswordAuthenticationFilter.class);

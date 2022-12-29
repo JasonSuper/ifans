@@ -17,7 +17,7 @@ import java.io.IOException;
 /**
  * 验证码获取
  */
-@Component
+//@Component
 public class ValidateCodeHandler implements HandlerFunction<ServerResponse> {
 
     @Autowired

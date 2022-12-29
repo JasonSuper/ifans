@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 验证码实现处理
  */
-@Service
+//@Service
 public class ValidateCodeServiceImpl implements ValidateCodeService {
     @Resource(name = "captchaProducer")
     private Producer captchaProducer;

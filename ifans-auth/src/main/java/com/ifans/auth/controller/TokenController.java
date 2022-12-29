@@ -11,10 +11,7 @@ import com.ifans.common.core.utils.SecurityUtils;
 import com.ifans.common.core.utils.StringUtils;
 import com.ifans.common.security.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,7 +27,7 @@ public class TokenController {
     @Autowired
     private SysLoginService sysLoginService;
 
-    @PostMapping("login")
+    @PostMapping("logina")
     public R<?> login(@RequestBody LoginBody form) {
         // 用户登录
         LoginUser userInfo = sysLoginService.login(form.getEmail(), form.getPassword());
