@@ -44,10 +44,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //return new BCryptPasswordEncoder();
     }
 
-    public static void main(String[] args) {
-        System.out.println(new BCryptPasswordEncoder().encode("zz5533114"));
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         if (CollectionUtil.isEmpty(ignoreUrls)) {
@@ -57,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(Convert.toStrArray(ignoreUrls)).permitAll()
-                //.anyRequest().authenticated()
+                .anyRequest().authenticated()
                 .and()
                 .csrf().disable();
     }

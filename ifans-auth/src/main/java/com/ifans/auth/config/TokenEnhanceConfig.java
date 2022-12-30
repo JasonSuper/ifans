@@ -39,8 +39,6 @@ public class TokenEnhanceConfig {
                  * value:['sys:user:add',...]
                  */
                 redisTemplate.opsForValue().set("AUTH:USER_PERMS:" + loginUserDetails.getLoginUser().getSysUser().getId(), loginUserDetails.getLoginUser().getPermissions());
-                //redisTemplate.opsForValue().set("AUTH:USER_PERMS:" + loginUserDetails.getLoginUser().getSysUser().getId(), "sys:admin");
-
             }
             ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
             return accessToken;
