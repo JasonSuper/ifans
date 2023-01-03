@@ -5,13 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ifans.api.system.domain.SysUser;
 import com.ifans.common.core.constant.UserConstants;
-import com.ifans.common.core.utils.StringUtils;
 import com.ifans.system.mapper.SysUserMapper;
 import com.ifans.system.service.ISysUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 /**
  * 用户 业务层处理
@@ -40,7 +41,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         LambdaQueryWrapper<SysUser> query = new LambdaQueryWrapper<>();
         query.eq(SysUser::getEmail, sysUser.getEmail());
         SysUser info = userMapper.selectOne(query);
-        if (StringUtils.isNotNull(info) && info.getEmail().equals(sysUser.getEmail())) {
+        if (!Objects.isNull(info) && info.getEmail().equals(sysUser.getEmail())) {
             return UserConstants.NOT_UNIQUE;
         }
         return UserConstants.UNIQUE;

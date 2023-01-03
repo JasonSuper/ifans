@@ -1,7 +1,7 @@
 package com.ifans.api.store;
 
 import com.ifans.api.system.fallback.FeignUserFallbackFactory;
-import com.ifans.common.core.web.domain.AjaxResult;
+import com.ifans.common.core.util.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface FeignStoreService {
 
     @GetMapping("/goods/info/{id}")
-    AjaxResult info(@PathVariable("id") String id);
+    R info(@PathVariable("id") String id);
 }

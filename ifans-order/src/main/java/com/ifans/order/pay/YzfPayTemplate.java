@@ -1,10 +1,9 @@
 package com.ifans.order.pay;
 
 import cn.hutool.http.HttpUtil;
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.alipay.api.AlipayApiException;
-import com.ifans.common.core.utils.StringUtils;
 import com.ifans.order.vo.PayVo;
 import com.ifans.order.vo.RefundPayVo;
 import lombok.Data;
@@ -111,7 +110,7 @@ public class YzfPayTemplate {
         String result = HttpUtil.post(url, param);
 
         JSONObject jo = JSON.parseObject(result);
-        if(jo.getInteger("code") == 1){
+        if (jo.getInteger("code") == 1) {
             System.out.println("交易退款，调用成功，返回结果：" + jo.getString("msg"));
             return result;
         } else {
@@ -128,7 +127,7 @@ public class YzfPayTemplate {
         String result = HttpUtil.get(url);
 
         JSONObject jo = JSON.parseObject(result);
-        if(jo.getInteger("code") == 1){
+        if (jo.getInteger("code") == 1) {
             System.out.println("交易查询，调用成功，返回结果：" + result);
             return result;
         } else {

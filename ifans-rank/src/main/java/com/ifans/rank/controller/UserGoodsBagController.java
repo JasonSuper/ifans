@@ -1,12 +1,10 @@
 package com.ifans.rank.controller;
 
 
-import com.ifans.api.rank.domain.UserGoodsBagTurnover;
 import com.ifans.api.rank.vo.UserGoodsBagVo;
-import com.ifans.common.core.annotation.InnerAuth;
-import com.ifans.common.core.domain.R;
-import com.ifans.common.core.utils.SecurityUtils;
-import com.ifans.common.core.web.domain.AjaxResult;
+import com.ifans.common.core.util.R;
+import com.ifans.common.security.annotation.Inner;
+import com.ifans.common.security.util.SecurityUtils;
 import com.ifans.rank.service.UserGoodsBagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +23,7 @@ public class UserGoodsBagController {
      */
     @GetMapping("/bag")
     public R bag() {
-        List<UserGoodsBagVo> list = userGoodsBagService.selectByUserId(SecurityUtils.getUserId());
+        List<UserGoodsBagVo> list = userGoodsBagService.selectByUserId(SecurityUtils.getUser().getId());
         return R.ok(list);
     }
 
@@ -47,9 +45,9 @@ public class UserGoodsBagController {
     /**
      * 获取当前用户某个道具的库存数量
      */
-    @InnerAuth
+    @Inner
     @PostMapping("/total/{goodsId}")
-    public AjaxResult total(@PathVariable String goodsId) {
+    public R total(@PathVariable String goodsId) {
         //return userGoodsBagService.g
         return null;
     }

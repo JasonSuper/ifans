@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import com.ifans.common.core.context.TenantContext;
-import com.ifans.common.core.utils.oConvertUtils;
+import com.ifans.common.core.mybatis.TenantContext;
+import com.ifans.common.core.util.oConvertUtils;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,7 +36,6 @@ public class MybatisPlusSaasConfig {
 //        tenantTable.add("sys_permission");
 //        tenantTable.add("sys_depart");
     }
-
 
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {

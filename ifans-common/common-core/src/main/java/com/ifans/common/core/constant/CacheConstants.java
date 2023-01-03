@@ -1,51 +1,48 @@
 package com.ifans.common.core.constant;
 
 /**
- * 缓存常量信息
+ * 缓存的key 常量
  */
-public class CacheConstants {
-    /**
-     * 缓存有效期，默认720（分钟）
-     */
-    public final static long EXPIRATION = 720;
+public interface CacheConstants {
 
-    /**
-     * 缓存刷新时间，默认120（分钟）
-     */
-    public final static long REFRESH_TIME = 120;
+	/**
+	 * oauth 缓存前缀
+	 */
+	String PROJECT_OAUTH_ACCESS = "token::access_token";
 
-    /**
-     * 密码最大错误次数
-     */
-    public final static int PASSWORD_MAX_RETRY_COUNT = 5;
+	/**
+	 * oauth 缓存令牌前缀
+	 */
+	String PROJECT_OAUTH_TOKEN = "pig_oauth:token:";
 
-    /**
-     * 密码锁定时间，默认10（分钟）
-     */
-    public final static long PASSWORD_LOCK_TIME = 10;
+	/**
+	 * 验证码前缀
+	 */
+	String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY:";
 
-    /**
-     * 权限缓存前缀
-     */
-    public final static String LOGIN_TOKEN_KEY = "login_tokens:";
+	/**
+	 * 菜单信息缓存
+	 */
+	String MENU_DETAILS = "menu_details";
 
-    /**
-     * 验证码 redis key
-     */
-    public static final String CAPTCHA_CODE_KEY = "captcha_codes:";
+	/**
+	 * 用户信息缓存
+	 */
+	String USER_DETAILS = "user_details";
 
-    /**
-     * 参数管理 cache key
-     */
-    public static final String SYS_CONFIG_KEY = "sys_config:";
+	/**
+	 * 字典信息缓存
+	 */
+	String DICT_DETAILS = "dict_details";
 
-    /**
-     * 字典管理 cache key
-     */
-    public static final String SYS_DICT_KEY = "sys_dict:";
+	/**
+	 * oauth 客户端信息
+	 */
+	String CLIENT_DETAILS_KEY = "client:details";
 
-    /**
-     * 登录账户密码错误次数 redis key
-     */
-    public static final String PWD_ERR_CNT_KEY = "pwd_err_cnt:";
+	/**
+	 * 参数缓存
+	 */
+	String PARAMS_DETAILS = "params_details";
+
 }

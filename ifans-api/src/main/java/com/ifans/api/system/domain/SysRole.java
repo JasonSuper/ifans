@@ -1,7 +1,7 @@
 package com.ifans.api.system.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.ifans.common.core.web.domain.BaseEntity;
+import com.ifans.common.core.util.BaseEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;

@@ -1,46 +1,110 @@
 package com.ifans.common.core.constant;
 
-/**
- * 权限相关通用常量
- */
-public class SecurityConstants {
-    /**
-     * 用户ID字段
-     */
-    public static final String DETAILS_USER_ID = "user_id";
+public interface SecurityConstants {
 
     /**
-     * 用户名字段
+     * 角色前缀
      */
-    public static final String DETAILS_USERNAME = "username";
+    String ROLE = "ROLE_";
 
     /**
-     * 授权信息字段
+     * 前缀
      */
-    public static final String AUTHORIZATION_HEADER = "authorization";
+    String PROJECT_PREFIX = "pig";
 
     /**
-     * 请求来源
+     * 项目的license
      */
-    public static final String FROM_SOURCE = "from-source";
+    String PROJECT_LICENSE = "https://hjxsuper.top";
 
     /**
-     * 内部请求
+     * 内部
      */
-    public static final String INNER = "inner";
+    String FROM_IN = "Y";
 
     /**
-     * 用户标识
+     * 标志
      */
-    public static final String USER_KEY = "user_key";
+    String FROM = "from";
 
     /**
-     * 登录用户
+     * 请求header
      */
-    public static final String LOGIN_USER = "login_user";
+    String HEADER_FROM_IN = FROM + "=" + FROM_IN;
 
     /**
-     * 角色权限
+     * 默认登录URL
      */
-    public static final String ROLE_PERMISSION = "role_permission";
+    String OAUTH_TOKEN_URL = "/oauth2/token";
+
+    /**
+     * grant_type
+     */
+    String REFRESH_TOKEN = "refresh_token";
+
+    /**
+     * 手机号登录
+     */
+    String APP = "app";
+
+    /**
+     * {bcrypt} 加密的特征码
+     */
+    String BCRYPT = "{bcrypt}";
+
+    /**
+     * {noop} 加密的特征码
+     */
+    String NOOP = "{noop}";
+
+    /***
+     * 资源服务器默认bean名称
+     */
+    String RESOURCE_SERVER_CONFIGURER = "resourceServerConfigurerAdapter";
+
+    /**
+     * 用户名
+     */
+    String USERNAME = "username";
+
+    /**
+     * 用户信息
+     */
+    String DETAILS_USER = "user_info";
+
+    /**
+     * 协议字段
+     */
+    String DETAILS_LICENSE = "license";
+
+    /**
+     * 验证码有效期,默认 60秒
+     */
+    long CODE_TIME = 60;
+
+    /**
+     * 验证码长度
+     */
+    String CODE_SIZE = "6";
+
+    /**
+     * 客户端模式
+     */
+    String CLIENT_CREDENTIALS = "client_credentials";
+
+    /**
+     * 客户端ID
+     */
+    String CLIENT_ID = "clientId";
+
+    /**
+     * 短信登录 参数名称
+     */
+    String SMS_PARAMETER_NAME = "phone";
+
+    /**
+     * 授权码模式confirm
+     */
+    String CUSTOM_CONSENT_PAGE_URI = "/token/confirm_access";
+
 }

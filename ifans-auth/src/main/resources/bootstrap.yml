@@ -3,7 +3,7 @@ server:
   port: 9204
 
 # Spring
-spring: 
+spring:
   application:
     # 应用名称
     name: ifans-auth
@@ -23,9 +23,16 @@ spring:
         server-addr: 127.0.0.1:8848
         # 配置文件格式
         file-extension: yml
+        # 常规配置文件 优先级大于 shared-configs，在 shared-configs 之后加载
+        extension-configs:
+          - data-id: ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            group: DEFAULT_GROUP   # 默认为DEFAULT_GROUP
+            refresh: true
         # 共享配置
         shared-configs:
-          - ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          - data-id: ifans-common.yml # 配置文件名-Data Id，Data Id必须写后缀
+            group: DEFAULT_GROUP   # 默认为DEFAULT_GROUP
+            refresh: true
         username: nacos
         password: nacos
         namespace: ifans-dev

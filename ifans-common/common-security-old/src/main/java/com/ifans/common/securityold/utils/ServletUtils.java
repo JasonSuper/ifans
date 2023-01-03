@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.ifans.common.core.constant.Constants;
 import com.ifans.common.core.domain.R;
 import com.ifans.common.core.text.Convert;
-import com.ifans.common.core.utils.StringUtils;
+import com.ifans.common.core.util.StringUtils;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -1,10 +1,9 @@
 package com.ifans.order.xxljob;
 
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.alibaba.fastjson2.JSONObject;
 import com.ifans.api.order.domain.StoreOrder;
-import com.ifans.common.core.utils.StringUtils;
 import com.ifans.order.pay.AliPayTemplate;
-import com.ifans.order.pay.YzfPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.redisson.api.RLock;

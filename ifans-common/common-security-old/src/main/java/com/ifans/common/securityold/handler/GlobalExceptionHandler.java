@@ -5,7 +5,7 @@ import com.ifans.common.core.exception.InnerAuthException;
 import com.ifans.common.core.exception.NotPermissionException;
 import com.ifans.common.core.exception.NotRoleException;
 import com.ifans.common.core.exception.ServiceException;
-import com.ifans.common.core.utils.StringUtils;
+import com.ifans.common.core.util.StringUtils;
 import com.ifans.common.core.web.domain.AjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

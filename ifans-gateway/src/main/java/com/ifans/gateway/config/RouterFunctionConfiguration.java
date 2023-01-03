@@ -1,28 +1,30 @@
 package com.ifans.gateway.config;
 
-import com.ifans.gateway.handler.ValidateCodeHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ifans.gateway.handler.ImageCodeHandler;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
+import org.springframework.web.reactive.function.server.ServerResponse;
 
 /**
  * 路由配置信息
  */
-//@Configuration
+@Slf4j
+@Configuration(proxyBeanMethods = false)
+@RequiredArgsConstructor
 public class RouterFunctionConfiguration {
 
-    @Autowired
-    private ValidateCodeHandler validateCodeHandler;
+    private final ImageCodeHandler imageCodeHandler;
 
-    @SuppressWarnings("rawtypes")
     @Bean
-    public RouterFunction routerFunction() {
+    public RouterFunction<ServerResponse> routerFunction() {
         return RouterFunctions.route(
-                RequestPredicates.GET("/code").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)),
-                validateCodeHandler);
+                RequestPredicates.path("/code").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)), imageCodeHandler);
     }
+
 }

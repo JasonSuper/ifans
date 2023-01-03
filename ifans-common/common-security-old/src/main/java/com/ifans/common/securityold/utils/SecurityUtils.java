@@ -4,7 +4,7 @@ import com.ifans.api.system.model.LoginUser;
 import com.ifans.common.core.constant.SecurityConstants;
 import com.ifans.common.core.constant.TokenConstants;
 import com.ifans.common.core.context.SecurityContextHolder;
-import com.ifans.common.core.utils.StringUtils;
+import com.ifans.common.core.util.StringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;

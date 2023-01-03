@@ -2,6 +2,7 @@ package com.ifans.order.controller;
 
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.alibaba.fastjson2.JSON;
 import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -11,18 +12,14 @@ import com.ifans.api.order.domain.StoreOrder;
 import com.ifans.api.order.vo.StoreOrderVo;
 import com.ifans.api.store.FeignStoreService;
 import com.ifans.api.store.domain.StoreGoods;
-import com.ifans.common.core.domain.R;
-import com.ifans.common.core.utils.ReflectMapUtils;
-import com.ifans.common.core.utils.SecurityUtils;
-import com.ifans.common.core.utils.StringUtils;
-import com.ifans.common.core.web.domain.AjaxResult;
+import com.ifans.common.core.util.R;
+import com.ifans.common.core.util.ReflectMapUtils;
+import com.ifans.common.security.util.SecurityUtils;
 import com.ifans.order.enums.OrderStatusEnum;
 import com.ifans.order.pay.AliPayTemplate;
-import com.ifans.order.pay.YzfPayTemplate;
 import com.ifans.order.service.OrderService;
 import com.ifans.order.vo.CreateOrderVo;
 import com.ifans.order.vo.PayVo;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +27,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -60,14 +58,14 @@ public class OrderController {
     private SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.DES, key);
 
     @PostMapping("/list")
-    public AjaxResult list(@RequestBody Page page) {
+    public R list(@RequestBody Page page) {
         IPage<StoreOrderVo> list = orderService.pageList(page, 0);
-        return AjaxResult.success(list);
+        return R.ok(list);
     }
 
     @PostMapping("/createOrder")
     public R createOrder(@RequestBody CreateOrderVo createOrderVo) {
-        String lockkey = SecurityUtils.getUserId() + createOrderVo.getGoodsId() + createOrderVo.getCount();
+        String lockkey = SecurityUtils.getUser().getId() + createOrderVo.getGoodsId() + createOrderVo.getCount();
         RLock lock = redissonClient.getLock(lockkey);
         lock.lock(20, TimeUnit.SECONDS);
 
@@ -76,15 +74,15 @@ public class OrderController {
             Map<String, Object> result = new HashMap<>();
 
             // 查询商品
-            AjaxResult storeResult = feignStoreService.info(createOrderVo.getGoodsId());
-            if ((int) storeResult.get("code") != 200 || storeResult.get("data") == null || StringUtils.isEmpty(storeResult.get("data").toString())) {
+            R storeResult = feignStoreService.info(createOrderVo.getGoodsId());
+            if (storeResult.getCode() != 200 || storeResult.getData() == null || StringUtils.isEmpty(storeResult.getData().toString())) {
                 result.put("code", "500");
                 result.put("msg", "商品不存在");
                 return R.ok(result);
             }
 
             // 校验价格
-            StoreGoods storeGoodsInfo = JSON.parseObject(storeResult.get("data").toString(), StoreGoods.class);
+            StoreGoods storeGoodsInfo = JSON.parseObject(storeResult.getData().toString(), StoreGoods.class);
             BigDecimal pay_money = storeGoodsInfo.getPrice().multiply(new BigDecimal(createOrderVo.getCount()));
             if (pay_money.compareTo(createOrderVo.getPay_money()) != 0) {
                 result.put("code", "500");
@@ -182,14 +180,14 @@ public class OrderController {
 
                 if (isClose) {
                     order.setPayStatus(OrderStatusEnum.CANCLED.getCode());
-                    order.setUserId(SecurityUtils.getUserId());
+                    order.setUserId(SecurityUtils.getUser().getId());
                     order.setUpdateTime(new Date());
                     orderService.updateById(order);
                     // 清除redis缓存
                     orderService.cleanOrderRedis(order.getId(), order.getUserId());
                 }
             }
-            return isClose ? R.ok("取消成功！") : R.fail("取消失败！");
+            return isClose ? R.ok("取消成功！") : R.failed("取消失败！");
         } finally {
             lock.unlock();
         }
@@ -238,20 +236,20 @@ public class OrderController {
 
         Object obj = redisTemplate.opsForValue().get(ORDER_PREPARE_KEY + ticket);
         if (obj == null) { // 不是30分钟内的请求
-            return R.fail("当前页面已失效，请返回详情页重新下单");
+            return R.failed("当前页面已失效，请返回详情页重新下单");
         }
 
         CreateOrderVo createOrderVo = (CreateOrderVo) obj;
-        AjaxResult ajaxResult = feignStoreService.info(createOrderVo.getGoodsId());
-        if (ajaxResult.get("data") != null) {
-            StoreGoods storeGoods = JSON.parseObject(ajaxResult.get("data").toString(), StoreGoods.class);
+        R r = feignStoreService.info(createOrderVo.getGoodsId());
+        if (r.getData() != null) {
+            StoreGoods storeGoods = JSON.parseObject(r.getData().toString(), StoreGoods.class);
             Map<String, Object> result = ReflectMapUtils.objectToMap(storeGoods);
             BigDecimal pay_price = new BigDecimal(result.get("price").toString()).multiply(new BigDecimal(createOrderVo.getCount()));
             result.put("pay_price", pay_price.toString());
             result.put("count", createOrderVo.getCount());
             return R.ok(result);
         } else {
-            return R.fail("出现异常！");
+            return R.failed("出现异常！");
         }
     }
 

@@ -1,6 +1,6 @@
 package com.ifans.common.securityold.ip;
 
-import com.ifans.common.core.utils.StringUtils;
+import com.ifans.common.core.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;

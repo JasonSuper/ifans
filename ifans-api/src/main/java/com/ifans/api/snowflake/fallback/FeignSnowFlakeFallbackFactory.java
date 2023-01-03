@@ -1,7 +1,7 @@
 package com.ifans.api.snowflake.fallback;
 
 import com.ifans.api.snowflake.FeignSnowFlake;
-import com.ifans.common.core.domain.R;
+import com.ifans.common.core.util.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FallbackFactory;
@@ -17,7 +17,7 @@ public class FeignSnowFlakeFallbackFactory implements FallbackFactory<FeignSnowF
         return new FeignSnowFlake() {
             @Override
             public R getSnowFlakeId() {
-                return R.fail("获取雪花ID失败:" + throwable.getMessage());
+                return R.failed("获取雪花ID失败:" + throwable.getMessage());
             }
         };
     }

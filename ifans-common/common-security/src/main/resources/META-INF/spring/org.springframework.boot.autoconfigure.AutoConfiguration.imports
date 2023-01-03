@@ -1,0 +1,7 @@
+com.ifans.common.security.service.IfansUserDetailsServiceImpl
+com.ifans.common.security.service.IfansAppUserDetailsServiceImpl
+com.ifans.common.security.service.IfansRedisOAuth2AuthorizationService
+com.ifans.common.security.service.IfansRedisOAuth2AuthorizationConsentService
+com.ifans.common.security.component.IfansSecurityInnerAspect
+com.ifans.common.security.component.IfansSecurityMessageSourceConfiguration
+com.ifans.common.security.service.IfansRemoteRegisteredClientRepository

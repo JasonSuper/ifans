@@ -2,6 +2,13 @@
 server:
   port: 9201
 
+security:
+  oauth2:
+    client:
+      client-id: ENC(jg2tK2iS2JqvcGWwITOpnRAErTvNrX1/)
+      client-secret: ENC(hMcCwaPEWKcVlRnvA3Yq32skThRFhFZhgqWT+TvdABM=)
+      scope: server
+
 # Spring
 spring: 
   application:

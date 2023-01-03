@@ -10,15 +10,12 @@ import com.ifans.api.order.domain.StoreOrderItem;
 import com.ifans.api.order.domain.StoreOrderPaymentInfo;
 import com.ifans.api.order.vo.StoreOrderVo;
 import com.ifans.api.rank.FeignRankService;
-import com.ifans.api.rank.domain.UserGoodsBag;
-import com.ifans.api.rank.domain.UserGoodsBagTurnover;
 import com.ifans.api.snowflake.FeignSnowFlake;
 import com.ifans.api.store.FeignStoreService;
 import com.ifans.api.store.domain.StoreGoods;
-import com.ifans.common.core.constant.SecurityConstants;
-import com.ifans.common.core.utils.BeanUtils;
-import com.ifans.common.core.utils.SecurityUtils;
-import com.ifans.common.core.web.domain.AjaxResult;
+import com.ifans.common.core.util.BeanUtils;
+import com.ifans.common.core.util.R;
+import com.ifans.common.security.util.SecurityUtils;
 import com.ifans.order.controller.OrderController;
 import com.ifans.order.enums.OrderStatusEnum;
 import com.ifans.order.mapper.OrderItemMapper;
@@ -79,14 +76,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
     @Transactional(rollbackFor = Exception.class)
     public String initOrder(CreateOrderVo createOrderVo) {
         // 获取商品信息
-        AjaxResult storeGoodsResult = feignStoreService.info(createOrderVo.getGoodsId());
-        StoreGoods storeGoods = JSON.parseObject(storeGoodsResult.get("data").toString(), StoreGoods.class);
+        R storeGoodsResult = feignStoreService.info(createOrderVo.getGoodsId());
+        StoreGoods storeGoods = JSON.parseObject(storeGoodsResult.getData().toString(), StoreGoods.class);
 
         // 创建订单
         StoreOrder storeOrder = new StoreOrder();
         storeOrder.setOrderNo(IdWorker.getId(storeOrder) + "");
         storeOrder.setOrderTime(new Date());
-        storeOrder.setUserId(SecurityUtils.getUserId());
+        storeOrder.setUserId(SecurityUtils.getUser().getId());
         storeOrder.setOrderPrice(createOrderVo.getPay_money());
         storeOrder.setMustPrice(createOrderVo.getPay_money());
         storeOrder.setPayStatus(OrderStatusEnum.CREATE_NEW.getCode());
@@ -110,7 +107,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
         // 生成token
         //long token = IdWorker.getId(storeOrder);
 
-        String orderKey = OrderController.ORDER + SecurityUtils.getUserId() + ":" + createOrderVo.getGoodsId() + createOrderVo.getCount() + ":" + storeOrder.getId();
+        String orderKey = OrderController.ORDER + SecurityUtils.getUser().getId() + ":" + createOrderVo.getGoodsId() + createOrderVo.getCount() + ":" + storeOrder.getId();
         /*// 缓存到redis，用于后续的幂等性操作
         BoundHashOperations boundHashOperations = redisTemplate.boundHashOps(key);
         //boundHashOperations.put("token", token);
@@ -136,7 +133,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
         StoreOrder storeOrder = null;
 
         // redis模糊检索订单的key
-        String searchOrderKey = OrderController.ORDER + SecurityUtils.getUserId() + ":" + createOrderVo.getGoodsId() + createOrderVo.getCount() + ":*";
+        String searchOrderKey = OrderController.ORDER + SecurityUtils.getUser().getId() + ":" + createOrderVo.getGoodsId() + createOrderVo.getCount() + ":*";
         ScanOptions scanOptions = ScanOptions.scanOptions().count(100L).match(searchOrderKey).build();
         Cursor<String> cursors = redisTemplate.scan(scanOptions);
         try {
@@ -154,7 +151,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, StoreOrder> imple
 
     @Override
     public IPage<StoreOrderVo> pageList(IPage<?> page, int status) {
-        IPage<StoreOrderVo> orderVoListPage = orderMapper.pageList(page, status, SecurityUtils.getUserId());
+        IPage<StoreOrderVo> orderVoListPage = orderMapper.pageList(page, status, SecurityUtils.getUser().getId());
         List<StoreOrderVo> storeOrderVoList = orderVoListPage.getRecords();
         storeOrderVoList.stream().forEach(item -> {
             List<StoreOrderItem> storeOrderItems = orderMapper.searchOrderItemsByOrderId(item.getId());

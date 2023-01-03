@@ -17,6 +17,7 @@
         <module>common-security</module>
         <module>common-security-old</module>
         <module>common-oss</module>
+        <module>common-feign</module>
     </modules>
 
 </project>

@@ -4,11 +4,11 @@ import com.ifans.api.system.domain.SysUser;
 import com.ifans.api.system.fallback.FeignUserFallbackFactory;
 import com.ifans.api.system.model.LoginUser;
 import com.ifans.common.core.constant.SecurityConstants;
-import com.ifans.common.core.domain.R;
+import com.ifans.common.core.util.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(value = "ifans-system", fallbackFactory = FeignUserFallbackFactory.class)
+@FeignClient(value = "ifans-system", contextId="feignUserService", fallbackFactory = FeignUserFallbackFactory.class)
 public interface FeignUserService {
 
     /**
@@ -18,8 +18,8 @@ public interface FeignUserService {
      * @param source   请求来源
      * @return 结果
      */
-    @GetMapping("/user/info/{username}")
-    R<LoginUser> getUserInfo(@PathVariable("username") String username, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @GetMapping(value = "/user/info/{username}", headers = SecurityConstants.HEADER_FROM_IN)
+    R<LoginUser> getUserInfo(@PathVariable("username") String username);
 
     /**
      * 注册用户信息
@@ -29,5 +29,5 @@ public interface FeignUserService {
      * @return 结果
      */
     @PostMapping("/user/register")
-    R<Boolean> registerUserInfo(@RequestBody SysUser sysUser, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    R<Boolean> registerUserInfo(@RequestBody SysUser sysUser);
 }

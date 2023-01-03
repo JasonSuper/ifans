@@ -22,7 +22,7 @@ public class LoginUserDetails implements UserDetails {
 
     public LoginUserDetails(LoginUser loginUser) {
         this.loginUser = loginUser;
-        this.loginUser.getSysUser().setPassword("{bcrypt}" + this.loginUser.getSysUser().getPassword());
+        //this.loginUser.getSysUser().setPassword("{bcrypt}" + this.loginUser.getSysUser().getPassword());
     }
 
     @JsonIgnore

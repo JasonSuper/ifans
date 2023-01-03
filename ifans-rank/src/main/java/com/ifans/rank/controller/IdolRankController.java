@@ -1,19 +1,19 @@
 package com.ifans.rank.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ifans.api.rank.domain.UserGoodsBag;
-import com.ifans.common.core.domain.R;
-import com.ifans.common.core.utils.SecurityUtils;
-import com.ifans.common.core.web.domain.AjaxResult;
+import com.ifans.common.core.util.R;
+import com.ifans.common.security.util.SecurityUtils;
 import com.ifans.rank.domain.IdolRank;
-import com.ifans.rank.mapper.UserGoodsBagMapper;
 import com.ifans.rank.service.IdolRankService;
 import com.ifans.rank.service.UserGoodsBagService;
 import com.ifans.rank.vo.HitCallVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +27,9 @@ public class IdolRankController {
     private UserGoodsBagService userGoodsBagService;
 
     @PostMapping("/list")
-    public AjaxResult list(@RequestBody Page page) {
+    public R list(@RequestBody Page page) {
         IPage<IdolRank> list = idolRankService.pageList(page, 0);
-        return AjaxResult.success(list);
+        return R.ok(list);
     }
 
     /**
@@ -37,7 +37,7 @@ public class IdolRankController {
      */
     @PostMapping("/hitCall")
     public R hitCall(@RequestBody HitCallVo hitCallVo) {
-        hitCallVo.setUserId(SecurityUtils.getUserId());
+        hitCallVo.setUserId(SecurityUtils.getUser().getId());
 
         // 查询用户要使用的道具，库存状况
         UserGoodsBag userGoodsBag = userGoodsBagService.searchUserGoods(hitCallVo);

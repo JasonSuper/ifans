@@ -4,7 +4,7 @@ import com.ifans.common.core.annotation.InnerAuth;
 import com.ifans.common.core.constant.SecurityConstants;
 import com.ifans.common.core.exception.InnerAuthException;
 import com.ifans.common.securityold.utils.ServletUtils;
-import com.ifans.common.core.utils.StringUtils;
+import com.ifans.common.core.util.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

@@ -4,7 +4,7 @@ import com.ifans.api.system.model.LoginUser;
 import com.ifans.common.core.constant.SecurityConstants;
 import com.ifans.common.core.context.SecurityContextHolder;
 import com.ifans.common.securityold.utils.ServletUtils;
-import com.ifans.common.core.utils.StringUtils;
+import com.ifans.common.core.util.StringUtils;
 import com.ifans.common.securityold.auth.AuthUtil;
 import com.ifans.common.securityold.utils.SecurityUtils;
 import org.springframework.web.method.HandlerMethod;

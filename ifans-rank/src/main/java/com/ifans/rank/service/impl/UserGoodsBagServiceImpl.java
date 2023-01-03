@@ -1,13 +1,12 @@
 package com.ifans.rank.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ifans.api.order.domain.StoreOrderItem;
 import com.ifans.api.order.vo.StoreOrderVo;
 import com.ifans.api.rank.domain.UserGoodsBag;
 import com.ifans.api.rank.domain.UserGoodsBagTurnover;
 import com.ifans.api.rank.vo.UserGoodsBagVo;
-import com.ifans.common.core.utils.BeanUtils;
+import com.ifans.common.core.util.BeanUtils;
 import com.ifans.rank.mapper.UserGoodsBagMapper;
 import com.ifans.rank.mapper.UserGoodsBagTurnoverMapper;
 import com.ifans.rank.service.UserGoodsBagService;

@@ -26,6 +26,7 @@ spring:
         # 共享配置
         shared-configs:
           - ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          - ifans-common.yml
         username: nacos
         password: nacos
         namespace: ifans-dev
@@ -44,6 +45,9 @@ spring:
 #            groupId: DEFAULT_GROUP
 #            data-type: json
 #            rule-type: flow
+#  config:
+#    import:
+#      - nacos:ifans-common.yml
 #  main:
 #    allow-bean-definition-overriding: true
 

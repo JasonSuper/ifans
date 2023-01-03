@@ -1,0 +1,3 @@
+com.ifans.common.feign.IfansFeignAutoConfiguration
+com.ifans.common.feign.sentinel.SentinelAutoConfiguration
+com.ifans.common.feign.sentinel.handle.GlobalBizExceptionHandler

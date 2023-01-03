@@ -1,5 +1,7 @@
 package com.ifans.store;
 
+import com.ifans.common.feign.annotation.EnableIfansFeignClients;
+import com.ifans.common.security.annotation.EnableIfansResourceServer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +14,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author HuangJX
  */
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = "com.ifans")
+@EnableIfansResourceServer
+@EnableIfansFeignClients
 @MapperScan(value = {"com.ifans.store.**.mapper*"})
 @SpringBootApplication(scanBasePackages = {"com.ifans"})
 public class IfansStoreApplication {

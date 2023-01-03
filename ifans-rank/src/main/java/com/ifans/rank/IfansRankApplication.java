@@ -1,5 +1,7 @@
 package com.ifans.rank;
 
+import com.ifans.common.feign.annotation.EnableIfansFeignClients;
+import com.ifans.common.security.annotation.EnableIfansResourceServer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,6 +14,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author HuangJX
  */
 @EnableDiscoveryClient
+@EnableIfansResourceServer
+@EnableIfansFeignClients
 @EnableFeignClients(basePackages = "com.ifans")
 @MapperScan(value = {"com.ifans.rank.**.mapper*"})
 @SpringBootApplication(scanBasePackages = {"com.ifans"})
