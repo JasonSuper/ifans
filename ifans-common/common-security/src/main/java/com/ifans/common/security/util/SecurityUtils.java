@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 安全工具类
@@ -47,6 +48,10 @@ public class SecurityUtils {
             return null;
         }
         return getUser(authentication);
+    }
+
+    public static boolean isAdmin(String userId) {
+        return userId != null && userId.equals("1");
     }
 
     /**

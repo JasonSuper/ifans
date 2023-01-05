@@ -45,4 +45,8 @@ public interface CacheConstants {
 	 */
 	String PARAMS_DETAILS = "params_details";
 
+	/**
+	 * 字典管理 cache key
+	 */
+	String SYS_DICT_KEY = "sys_dict:";
 }

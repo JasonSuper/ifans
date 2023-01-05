@@ -22,7 +22,7 @@ public class SysRole extends BaseEntity {
      * 角色ID
      */
     @TableId(type = IdType.ASSIGN_ID)
-    private String id;
+    private Long id;
 
     /**
      * 角色名称

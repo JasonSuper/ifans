@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * Redis 配置类
@@ -36,11 +37,24 @@ public class RedisTemplateConfiguration {
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(factory);
+
+        /*com.ifans.common.redis.conf.FastJson2JsonRedisSerializer serializer = new com.ifans.common.redis.conf.FastJson2JsonRedisSerializer(Object.class);
+
+        // 使用StringRedisSerializer来序列化和反序列化redis的key值
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(serializer);
+
+        // Hash的key也采用StringRedisSerializer的序列化方式
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(serializer);
+        redisTemplate.afterPropertiesSet();*/
+
         redisTemplate.setKeySerializer(RedisSerializer.string());
         redisTemplate.setHashKeySerializer(RedisSerializer.string());
         redisTemplate.setValueSerializer(RedisSerializer.java());
         redisTemplate.setHashValueSerializer(RedisSerializer.java());
-        redisTemplate.setConnectionFactory(factory);
+
         return redisTemplate;
     }
 

@@ -160,8 +160,7 @@ public class IfansTokenEndpoint {
         }
 
         Map<String, Object> claims = authorization.getAccessToken().getClaims();
-        OAuth2AccessTokenResponse sendAccessTokenResponse = OAuth2EndpointUtils.sendAccessTokenResponse(authorization,
-                claims);
+        OAuth2AccessTokenResponse sendAccessTokenResponse = OAuth2EndpointUtils.sendAccessTokenResponse(authorization, claims);
         this.accessTokenHttpResponseConverter.write(sendAccessTokenResponse, MediaType.APPLICATION_JSON, httpResponse);
     }
 

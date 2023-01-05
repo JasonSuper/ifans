@@ -18,16 +18,12 @@
     </properties>
 
     <modules>
-        <module>ifans-system</module>
         <module>ifans-gateway</module>
         <module>ifans-auth</module>
-        <module>ifans-snowflake</module>
         <module>ifans-common</module>
         <module>ifans-api</module>
-        <module>ifans-store</module>
-        <module>ifans-order</module>
-        <module>ifans-rank</module>
         <module>ifans-activiti</module>
+        <module>ifans-modules</module>
     </modules>
 
     <!-- 依赖声明 -->
@@ -219,6 +215,26 @@
                 <groupId>com.ifans</groupId>
                 <artifactId>ifans-api</artifactId>
                 <version>1.0.0</version>
+            </dependency>
+
+            <!-- pagehelper 分页插件 -->
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>1.4.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.jsqlparser</groupId>
+                <artifactId>jsqlparser</artifactId>
+                <version>4.5</version>
+            </dependency>
+
+            <!-- excel工具 -->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>4.1.2</version>
             </dependency>
         </dependencies>
 

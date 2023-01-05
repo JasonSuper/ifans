@@ -26,7 +26,7 @@ public class SysMenu extends BaseEntity {
      * 菜单ID
      */
     @TableId(type = IdType.ASSIGN_ID)
-    private Long menuId;
+    private Long id;
 
     /**
      * 菜单名称
@@ -121,7 +121,7 @@ public class SysMenu extends BaseEntity {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("menuId", getMenuId())
+                .append("menuId", getId())
                 .append("menuName", getMenuName())
                 .append("parentId", getParentId())
                 .append("orderNum", getOrderNum())

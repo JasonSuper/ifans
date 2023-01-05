@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * 部门表 sys_dept
  *
- * @author ruoyi
  */
 @Data
 @NoArgsConstructor
@@ -25,13 +24,13 @@ public class SysDept extends BaseEntity {
      * 部门ID
      */
     @TableId(type = IdType.ASSIGN_ID)
-    private String id;
+    private Long id;
 
     /**
      * 父部门ID
      */
     @TableField("parent_id")
-    private String parentId;
+    private Long parentId;
 
     /**
      * 祖级列表

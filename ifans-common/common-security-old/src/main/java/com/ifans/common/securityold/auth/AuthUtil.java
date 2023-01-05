@@ -8,7 +8,6 @@ import com.ifans.common.securityold.utils.SecurityUtils;
 /**
  * Token 权限验证工具类
  *
- * @author ruoyi
  */
 public class AuthUtil {
     /**

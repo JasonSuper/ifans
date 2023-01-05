@@ -1,11 +1,9 @@
 package com.ifans.activiti;
 
-import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 
-@SpringBootApplication(exclude = {RedissonAutoConfiguration.class, RedisAutoConfiguration.class})
+@SpringBootApplication
 public class IfansActivitiApplication {
 
     public static void main(String[] args) {

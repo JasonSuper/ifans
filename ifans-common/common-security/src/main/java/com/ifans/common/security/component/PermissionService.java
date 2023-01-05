@@ -28,6 +28,11 @@ public class PermissionService {
 		if (authentication == null) {
 			return false;
 		}
+
+		if (authentication.getAuthorities().stream().anyMatch(auth ->auth.getAuthority().equals("*:*:*"))) {
+			return true;
+		}
+
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		return authorities.stream().map(GrantedAuthority::getAuthority).filter(StringUtils::hasText)
 				.anyMatch(x -> PatternMatchUtils.simpleMatch(permissions, x));
