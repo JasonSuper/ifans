@@ -25,7 +25,7 @@
 
 
     <resultMap type="com.ifans.api.system.domain.SysMenu" id="SysMenuResult">
-        <!--<id     property="id"         column="id"        />-->
+        <id     property="id"         column="id"        />
         <result property="menuName"       column="menu_name"      />
         <result property="parentName"     column="parent_name"    />
         <result property="parentId"       column="parent_id"      />
@@ -195,7 +195,7 @@
         <if test="createBy != null and createBy != ''">create_by,</if>
         create_time
         )values(
-        <if test="id != null and id != 0">#{menuId},</if>
+        <if test="id != null and id != 0">#{id},</if>
         <if test="parentId != null and parentId != 0">#{parentId},</if>
         <if test="menuName != null and menuName != ''">#{menuName},</if>
         <if test="orderNum != null">#{orderNum},</if>
@@ -218,4 +218,8 @@
     <delete id="deleteMenuById" parameterType="Long">
         delete from sys_menu where id = #{menuId}
     </delete>
+
+    <select id="maxId" resultType="java.lang.Long">
+        select max(CAST(id AS SIGNED)) + 1 from sys_menu
+    </select>
 </mapper>

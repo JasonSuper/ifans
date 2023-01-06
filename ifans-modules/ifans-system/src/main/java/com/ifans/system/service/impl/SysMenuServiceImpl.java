@@ -1,6 +1,7 @@
 package com.ifans.system.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ifans.api.system.domain.SysMenu;
 import com.ifans.api.system.domain.SysRole;
@@ -284,6 +285,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
      */
     @Override
     public int insertMenu(SysMenu menu) {
+        menu.setId(menuMapper.maxId());
         return menuMapper.insertMenu(menu);
     }
 

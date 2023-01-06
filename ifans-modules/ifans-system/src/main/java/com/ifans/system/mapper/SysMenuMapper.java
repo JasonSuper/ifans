@@ -119,4 +119,6 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * @return 结果
      */
     SysMenu checkMenuNameUnique(@Param("menuName") String menuName, @Param("parentId") Long parentId);
+
+    Long maxId();
 }

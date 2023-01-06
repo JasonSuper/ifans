@@ -82,9 +82,9 @@
         </dependency>
 
         <!-- 对象存储OSS -->
-        <dependency>
+        <!--<dependency>
             <groupId>com.ifans</groupId>
             <artifactId>common-oss</artifactId>
-        </dependency>
+        </dependency>-->
     </dependencies>
 </project>
