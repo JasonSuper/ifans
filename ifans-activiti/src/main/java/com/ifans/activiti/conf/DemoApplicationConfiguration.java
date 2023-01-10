@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
-@EnableWebSecurity
+//@EnableWebSecurity
 public class DemoApplicationConfiguration {
 //public class DemoApplicationConfiguration extends WebSecurityConfigurerAdapter {
 

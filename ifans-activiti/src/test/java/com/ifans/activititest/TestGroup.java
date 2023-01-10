@@ -106,7 +106,7 @@ public class TestGroup {
         Task task = taskService.createTaskQuery()
                 .processDefinitionKey("QjGroup")
                 //.taskId(taskId)
-                .taskCandidateGroup(userId)
+                .taskCandidateUser(userId)
                 .singleResult();
 
         // 权限验证

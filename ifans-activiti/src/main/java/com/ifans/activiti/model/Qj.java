@@ -35,7 +35,7 @@ public class Qj implements Serializable {
     private String qjName;
 
     /**
-     * 请假填数
+     * 请假天数
      */
     private Double num;
 
