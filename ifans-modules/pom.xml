@@ -18,6 +18,7 @@
         <module>ifans-store</module>
         <module>ifans-system</module>
         <module>ifans-gen</module>
+        <module>ifans-fileupload</module>
     </modules>
 
 </project>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifans.order.mapper.StoreOrderRefundapplyMapper">
+    
+    <resultMap type="com.ifans.api.order.domain.StoreOrderRefundapply" id="StoreOrderRefundapplyResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="applyTime"    column="apply_time"    />
+        <result property="activitiInstanceId"    column="activiti_instance_id"    />
+        <result property="refundReason"    column="refund_reason"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectStoreOrderRefundapplyVo">
+        select id, order_id, apply_time, activiti_instance_id, refund_reason, status, create_by, create_time, update_by, update_time, remark from store_order_refundapply
+    </sql>
+
+    <select id="selectStoreOrderRefundapplyList" parameterType="com.ifans.api.order.domain.StoreOrderRefundapply" resultMap="StoreOrderRefundapplyResult">
+        <include refid="selectStoreOrderRefundapplyVo"/>
+        <where>  
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="applyTime != null "> and apply_time = #{applyTime}</if>
+            <if test="refundReason != null  and refundReason != ''"> and refund_reason = #{refundReason}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectStoreOrderRefundapplyById" parameterType="String" resultMap="StoreOrderRefundapplyResult">
+        <include refid="selectStoreOrderRefundapplyVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStoreOrderRefundapply" parameterType="com.ifans.api.order.domain.StoreOrderRefundapply">
+        insert into store_order_refundapply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="orderId != null and orderId != ''">order_id,</if>
+            <if test="applyTime != null">apply_time,</if>
+            <if test="refundReason != null">refund_reason,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="orderId != null and orderId != ''">#{orderId},</if>
+            <if test="applyTime != null">#{applyTime},</if>
+            <if test="refundReason != null">#{refundReason},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStoreOrderRefundapply" parameterType="com.ifans.api.order.domain.StoreOrderRefundapply">
+        update store_order_refundapply
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">order_id = #{orderId},</if>
+            <if test="applyTime != null">apply_time = #{applyTime},</if>
+            <if test="refundReason != null">refund_reason = #{refundReason},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStoreOrderRefundapplyById" parameterType="String">
+        delete from store_order_refundapply where id = #{id}
+    </delete>
+
+    <delete id="deleteStoreOrderRefundapplyByIds" parameterType="String">
+        delete from store_order_refundapply where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
