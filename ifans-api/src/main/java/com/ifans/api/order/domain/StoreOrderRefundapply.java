@@ -58,7 +58,7 @@ public class StoreOrderRefundapply extends BaseEntity {
     /**
      * 审核状态 0未审核 1审核中 2通过 3驳回
      */
-    @TableField("status")
+    @TableField("bpm_status")
     @Excel(name = "审核状态 0未审核 1审核中 2通过 3驳回")
-    private Long status;
+    private Long bpmStatus;
 }

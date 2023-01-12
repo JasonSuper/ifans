@@ -19,11 +19,6 @@ public class FeignRefundActivitiFallbackFactory implements FallbackFactory<Feign
         return new FeignRefundActivitiService() {
 
             @Override
-            public R processInstanceHistoricTask(String instanceId) {
-                return R.failed("根据实例id查询审核流程历史，失败:" + throwable.getMessage());
-            }
-
-            @Override
             public R startProcessAndSetGlobalVariable(RefundVariables refundVariables) {
                 return R.failed("启动一个流程实例（只进行流程启动不进入下一步），失败:" + throwable.getMessage());
             }
@@ -31,16 +26,6 @@ public class FeignRefundActivitiFallbackFactory implements FallbackFactory<Feign
             @Override
             public R startProcessAndSetGlobalVariableTo(RefundVariables refundVariables, String candidateGroupMatchStr) {
                 return R.failed("启动一个流程实例（进行流程启动且进入下一步），失败:" + throwable.getMessage());
-            }
-
-            @Override
-            public R claimTask(String instanceId, String candidateGroupMatchStr) {
-                return R.failed("拾取任务，失败:" + throwable.getMessage());
-            }
-
-            @Override
-            public R completTask(String instanceId) {
-                return R.failed("完成任务，失败:" + throwable.getMessage());
             }
         };
     }

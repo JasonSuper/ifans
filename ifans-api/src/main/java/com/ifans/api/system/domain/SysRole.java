@@ -18,6 +18,10 @@ import java.util.Set;
 public class SysRole extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
+    public SysRole(Long roleId) {
+        this.id = roleId;
+    }
+
     /**
      * 角色ID
      */
@@ -83,19 +87,27 @@ public class SysRole extends BaseEntity {
      * 菜单组
      */
     @TableField(exist = false)
-    private String[] menuIds;
+    private Long[] menuIds;
 
     /**
      * 部门组（数据权限）
      */
     @TableField(exist = false)
-    private String[] deptIds;
+    private Long[] deptIds;
 
     /**
      * 角色菜单权限
      */
     @TableField(exist = false)
     private Set<String> permissions;
+
+    public boolean isAdmin() {
+        return isAdmin(this.id);
+    }
+
+    public static boolean isAdmin(Long roleId) {
+        return roleId != null && 1L == roleId;
+    }
 
     @Override
     public String toString() {

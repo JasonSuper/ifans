@@ -38,4 +38,9 @@ public class RefundVariables {
      */
     @NotNull(message = "申请人名字不能为空")
     private String userName;
+
+    /**
+     * 审批状态
+     */
+    private int status;
 }
