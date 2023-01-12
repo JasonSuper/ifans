@@ -1,5 +1,7 @@
 package com.ifans.system.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.ifans.api.system.domain.SysDept;
 import com.ifans.api.system.domain.SysRole;
 import com.ifans.api.system.domain.SysUser;
 import com.ifans.api.system.domain.SysUserRole;
@@ -9,6 +11,7 @@ import com.ifans.common.core.web.controller.BaseController;
 import com.ifans.common.core.web.domain.AjaxResult;
 import com.ifans.common.core.web.page.TableDataInfo;
 import com.ifans.common.security.util.SecurityUtils;
+import com.ifans.system.service.ISysDeptService;
 import com.ifans.system.service.ISysRoleService;
 import com.ifans.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +31,10 @@ public class SysRoleController extends BaseController {
 
     @Autowired
     private ISysRoleService roleService;
-
     @Autowired
     private ISysUserService userService;
+    @Autowired
+    private ISysDeptService deptService;
 
 //    @Autowired
 //    private ISysDeptService deptService;
@@ -75,6 +79,7 @@ public class SysRoleController extends BaseController {
         } else if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleKeyUnique(role))) {
             return AjaxResult.error("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
+        role.setId(IdWorker.getId());
         role.setCreateBy(SecurityUtils.getUser().getUsername());
         return toAjax(roleService.insertRole(role));
 
@@ -117,7 +122,8 @@ public class SysRoleController extends BaseController {
         roleService.checkRoleAllowed(role);
         roleService.checkRoleDataScope(role.getId());
         role.setUpdateBy(SecurityUtils.getUser().getUsername());
-        return toAjax(roleService.updateRoleStatus(role));
+        int i = roleService.updateRoleStatus(role);
+        return toAjax(i);
     }
 
     /**
@@ -188,15 +194,15 @@ public class SysRoleController extends BaseController {
         return toAjax(roleService.insertAuthUsers(roleId, userIds));
     }
 
-//    /**
-//     * 获取对应角色部门树列表
-//     */
-//    @PreAuthorize("@pms.hasPermission('system:role:query')")
-//    @GetMapping(value = "/deptTree/{roleId}")
-//    public AjaxResult deptTree(@PathVariable("roleId") Long roleId) {
-//        AjaxResult ajax = AjaxResult.success();
-//        ajax.put("checkedKeys", deptService.selectDeptListByRoleId(roleId));
-//        ajax.put("depts", deptService.selectDeptTreeList(new SysDept()));
-//        return ajax;
-//    }
+    /**
+     * 获取对应角色部门树列表
+     */
+    @PreAuthorize("@pms.hasPermission('system:role:query')")
+    @GetMapping(value = "/deptTree/{roleId}")
+    public AjaxResult deptTree(@PathVariable("roleId") Long roleId) {
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("checkedKeys", deptService.selectDeptListByRoleId(roleId));
+        ajax.put("depts", deptService.selectDeptTreeList(new SysDept()));
+        return ajax;
+    }
 }
