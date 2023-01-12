@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ifans.api.system.domain.SysUser;
 import com.ifans.common.core.constant.UserConstants;
+import com.ifans.datascope.annotation.DataScope;
 import com.ifans.system.mapper.SysUserMapper;
 import com.ifans.system.service.ISysUserService;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -57,5 +59,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         LambdaUpdateWrapper<SysUser> wrapper = new LambdaUpdateWrapper<>();
         wrapper.set(SysUser::getAvatar, url).eq(SysUser::getId, userId);
         return userMapper.update(null, wrapper);
+    }
+
+    @Override
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public List<SysUser> selectAllocatedList(SysUser user) {
+        return userMapper.selectAllocatedList(user);
+    }
+
+    @Override
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public List<SysUser> selectUnallocatedList(SysUser user) {
+        return userMapper.selectUnallocatedList(user);
     }
 }
