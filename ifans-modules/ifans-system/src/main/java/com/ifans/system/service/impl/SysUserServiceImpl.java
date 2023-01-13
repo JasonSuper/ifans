@@ -2,6 +2,7 @@ package com.ifans.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ifans.api.system.domain.SysRole;
 import com.ifans.api.system.domain.SysUser;
@@ -55,8 +56,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public SysUser selectUserById(String userId) {
         SysUser sysUser = userMapper.selectById(userId);
-        List<SysRole> roles = roleMapper.selectRolesByUserName(sysUser.getUserName());
-        sysUser.setRoles(roles);
+        if(sysUser != null) {
+            List<SysRole> roles = roleMapper.selectRolesByUserName(sysUser.getUserName());
+            sysUser.setRoles(roles);
+        }
         return sysUser;
     }
 
@@ -236,6 +239,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insertUser(SysUser user) {
+        if(StringUtils.isEmpty(user.getId())) {
+            user.setId(IdWorker.getIdStr());
+        }
+
         // 新增用户信息
         int rows = userMapper.insertUser(user);
         // 新增用户岗位关联
