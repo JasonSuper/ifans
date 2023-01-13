@@ -1,6 +1,8 @@
 package com.ifans.api.system.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.ifans.common.core.util.BaseEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,14 +20,15 @@ import java.util.Set;
 public class SysRole extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    public SysRole(Long roleId) {
-        this.id = roleId;
+    public SysRole(Long id) {
+        this.id = id;
     }
 
     /**
      * 角色ID
      */
     @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
@@ -87,12 +90,14 @@ public class SysRole extends BaseEntity {
      * 菜单组
      */
     @TableField(exist = false)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long[] menuIds;
 
     /**
      * 部门组（数据权限）
      */
     @TableField(exist = false)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long[] deptIds;
 
     /**
@@ -112,7 +117,7 @@ public class SysRole extends BaseEntity {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("roleId", getId())
+                .append("id", getId())
                 .append("roleName", getRoleName())
                 .append("roleKey", getRoleKey())
                 .append("roleSort", getRoleSort())

@@ -2,6 +2,8 @@ package com.ifans.api.system.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.ifans.common.core.annotation.Excel;
 import com.ifans.common.core.constant.UserConstants;
 import com.ifans.common.core.util.BaseEntity;
@@ -28,6 +30,7 @@ public class SysDictData extends BaseEntity {
      */
     @TableField("dict_code")
     @Excel(name = "字典编码", cellType = Excel.ColumnType.NUMERIC)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long dictCode;
 
     /**

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.ifans.common.core.util.BaseEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +28,7 @@ public class SysMenu extends BaseEntity {
      * 菜单ID
      */
     @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
@@ -44,6 +47,7 @@ public class SysMenu extends BaseEntity {
      * 父菜单ID
      */
     @TableField("parent_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;
 
     /**

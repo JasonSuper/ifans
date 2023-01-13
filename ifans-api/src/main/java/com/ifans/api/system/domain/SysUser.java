@@ -114,13 +114,13 @@ public class SysUser extends BaseEntity {
      * 角色组
      */
     @TableField(exist = false)
-    private String[] roleIds;
+    private Long[] roleIds;
 
     /**
      * 岗位组
      */
     @TableField(exist = false)
-    private String[] postIds;
+    private Long[] postIds;
 
     /**
      * 角色ID

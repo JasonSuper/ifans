@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.ifans.common.core.annotation.Excel;
 import com.ifans.common.core.util.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -27,6 +29,7 @@ public class SysDictType extends BaseEntity {
      */
     @TableId(value = "dict_id", type = IdType.ASSIGN_ID)
     @Excel(name = "字典主键", cellType = Excel.ColumnType.NUMERIC)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long dictId;
 
     /**

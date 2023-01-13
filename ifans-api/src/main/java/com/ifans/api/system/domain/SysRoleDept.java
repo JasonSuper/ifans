@@ -1,5 +1,7 @@
 package com.ifans.api.system.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -12,11 +14,13 @@ public class SysRoleDept {
     /**
      * 角色ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long roleId;
 
     /**
      * 部门ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long deptId;
 
     public Long getRoleId() {

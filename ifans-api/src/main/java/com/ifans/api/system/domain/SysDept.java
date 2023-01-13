@@ -1,6 +1,8 @@
 package com.ifans.api.system.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.ifans.common.core.util.BaseEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,12 +26,14 @@ public class SysDept extends BaseEntity {
      * 部门ID
      */
     @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
      * 父部门ID
      */
     @TableField("parent_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;
 
     /**
