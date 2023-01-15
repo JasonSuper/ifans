@@ -12,17 +12,17 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +61,11 @@ public class ActivitiController extends BaseController {
         // 封装返回数据
         TableDataInfo result = new TableDataInfo(list, (int) total);
         return result;
+
+//        startPage();
+//        // 查询适合当前用户的任务
+//        List<ActBusRelation> list = activitiService.actBusRelationList();
+//        return getDataTable(list);
     }
 
     /**
@@ -97,6 +102,55 @@ public class ActivitiController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
             return R.failed("拾取任务失败，原因：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 完成任务
+     */
+    @PostMapping("/completTask")
+    public R completTask(String taskId, int bpmStatus, String reason) {
+        try {
+            R r = activitiService.completTask(taskId, bpmStatus, reason);
+            return r;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.failed("完成任务失败，原因：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据实例id查询审核流程历史
+     */
+    @GetMapping("/auditHis/{instanceId}")
+    public R auditHis(@PathVariable("instanceId") String instanceId) {
+        try {
+            List<Map<String, Object>> resList = new ArrayList<>();
+
+            // 查询历史，获取流程的相关信息
+            /*List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery() //创建查询对象
+                    .processInstanceId(instanceId) //使用流程实例ID查询
+                    .list();*/
+
+            List<Map<String, Object>> list = activitiService.auditHis(instanceId);
+            list.stream().forEach(hiTask -> {
+                Map<String, Object> res = new HashMap<>();
+                res.put("name", hiTask.get("NAME_"));
+                res.put("assignee", hiTask.get("ASSIGNEE_"));
+                res.put("assigneeName", hiTask.get("assigneeName"));
+                res.put("startTime", hiTask.get("START_TIME_"));
+                res.put("endTime", hiTask.get("END_TIME_"));
+                //res.put("reason", "");
+                List<Comment> taskComments = taskService.getTaskComments(hiTask.get("ID_").toString());
+                if (taskComments != null && taskComments.size() > 0) {
+                    res.put("reason", taskComments.get(0).getFullMessage());
+                }
+                resList.add(res);
+            });
+            return R.ok(resList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.failed();
         }
     }
 

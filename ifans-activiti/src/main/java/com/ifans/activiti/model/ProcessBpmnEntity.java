@@ -20,14 +20,24 @@ public class ProcessBpmnEntity {
     private Set<String> activeActivityIds;
 
     /**
-     * 已执行节点id
+     * 已执行节点id - 通过
      */
     private Set<String> executedActivityIds;
+
+    /**
+     * 已执行节点id - 拒绝
+     */
+    private Set<String> executedActivityRejectIds;
 
     /**
      * 高亮线id（流程已走过的线）
      */
     private Set<String> highlightedFlowIds;
+
+    /**
+     * 高亮线id（流程拒绝已走过的线）
+     */
+    private Set<String> highlightedRejectFlowIds;
 
     /**
      * 流程xml文件 字符串

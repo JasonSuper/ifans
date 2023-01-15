@@ -3,9 +3,13 @@ package com.ifans.activiti.service.impl;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.nacos.common.utils.CollectionUtils;
+import com.ifans.activiti.mapper.ActivitiMapper;
 import com.ifans.activiti.model.ProcessBpmnEntity;
 import com.ifans.activiti.service.ActivitiService;
+import com.ifans.api.activiti.domain.ActBusRelation;
 import com.ifans.api.activiti.domain.RefundVariables;
+import com.ifans.api.order.FeignActBusRelationService;
+import com.ifans.common.core.util.R;
 import com.ifans.common.redis.service.RedisService;
 import com.ifans.common.security.util.SecurityUtils;
 import org.activiti.bpmn.model.BpmnModel;
@@ -17,6 +21,8 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricActivityInstance;
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -27,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,6 +61,10 @@ public class ActivitiServiceImpl implements ActivitiService {
     private RedisService redisService;
     @Autowired
     private RedissonClient redissonClient;
+    @Autowired
+    private ActivitiMapper activitiMapper;
+    @Autowired
+    private FeignActBusRelationService feignActBusRelationService;
 
     /**
      * 审核流程图xml数据的缓存
@@ -163,7 +174,8 @@ public class ActivitiServiceImpl implements ActivitiService {
      */
     @Override
     public ProcessBpmnEntity initProcessBpmn(String instanceId) throws Exception {
-        ProcessInstance instance = runtimeService.createProcessInstanceQuery().processInstanceId(instanceId).singleResult();
+        HistoricProcessInstance instance = historyService.createHistoricProcessInstanceQuery().processInstanceId(instanceId).singleResult();
+        //ProcessInstance instance = runtimeService.createProcessInstanceQuery().processInstanceId(instanceId).singleResult();
         ProcessDefinition processDefinition = repositoryService.getProcessDefinition(instance.getProcessDefinitionId());
         BpmnModel bpmnModel = repositoryService.getBpmnModel(instance.getProcessDefinitionId());
 
@@ -208,25 +220,48 @@ public class ActivitiServiceImpl implements ActivitiService {
 
     private ProcessBpmnEntity getProcessBpmnData(Process process, List<HistoricActivityInstance> historicActInstances) {
         ProcessBpmnEntity entity = new ProcessBpmnEntity();
-        // 已执行的节点id
+        // 已执行的节点id - 通过
         Set<String> executedActivityIds = new HashSet<>();
+        // 已执行的节点id - 拒绝
+        Set<String> executedActivityRejectIds = new HashSet<>();
         // 正在执行的节点id
         Set<String> activeActivityIds = new HashSet<>();
         // 高亮流程已发生流转的线id集合
         Set<String> highLightedFlowIds = new HashSet<>();
+        // 高亮流程已发生流转拒绝的线id集合
+        Set<String> highLightedRejectFlowIds = new HashSet<>();
         // 全部活动节点
         List<FlowNode> historicActivityNodes = new ArrayList<>();
+        // 审批拒绝活动节点
+        List<FlowNode> historicActivityRejectNodes = new ArrayList<>();
         // 已完成的历史活动节点
         List<HistoricActivityInstance> finishedActivityInstances = new ArrayList<>();
 
         // 遍历流程实例执行历史
         for (HistoricActivityInstance historicActivityInstance : historicActInstances) {
+            String status = "";
+            HistoricTaskInstance historicTaskInstance = historyService.createHistoricTaskInstanceQuery()
+                    .processInstanceId(historicActivityInstance.getProcessInstanceId())
+                    .taskDefinitionKey(historicActivityInstance.getActivityId())
+                    .includeTaskLocalVariables()
+                    .singleResult();
+
+            if(historicTaskInstance != null) {
+                status = historicTaskInstance.getTaskLocalVariables().getOrDefault("status-" + historicTaskInstance.getTaskDefinitionKey(), "").toString();
+            }
+
             FlowNode flowNode = (FlowNode) process.getFlowElement(historicActivityInstance.getActivityId(), true);
             historicActivityNodes.add(flowNode); // 生成活动节点
             if (historicActivityInstance.getEndTime() != null) {
+                if (status.equals("2")) {
+                    executedActivityRejectIds.add(historicActivityInstance.getActivityId()); // 记录已执行的节点id - 拒绝
+                    historicActivityRejectNodes.add(flowNode);
+                } else {
+                    executedActivityIds.add(historicActivityInstance.getActivityId()); // 记录已执行的节点id - 通过
+                }
                 // 如果执行历史存在结束时间，表示已完成
                 finishedActivityInstances.add(historicActivityInstance); // 生成已完成的历史活动节点
-                executedActivityIds.add(historicActivityInstance.getActivityId()); // 记录已执行的节点id
+
             } else {
                 activeActivityIds.add(historicActivityInstance.getActivityId()); // 记录正在执行的节点id
             }
@@ -249,7 +284,9 @@ public class ActivitiServiceImpl implements ActivitiService {
                 // 遍历历史活动节点，找到匹配流程目标节点的
                 for (SequenceFlow sequenceFlow : sequenceFlows) {
                     targetFlowNode = (FlowNode) process.getFlowElement(sequenceFlow.getTargetRef(), true);
-                    if (historicActivityNodes.contains(targetFlowNode)) {
+                    if (historicActivityRejectNodes.contains(targetFlowNode)) {
+                        highLightedRejectFlowIds.add(sequenceFlow.getId());
+                    } else if (historicActivityNodes.contains(targetFlowNode)) {
                         highLightedFlowIds.add(sequenceFlow.getId());
                     }
                 }
@@ -259,8 +296,12 @@ public class ActivitiServiceImpl implements ActivitiService {
                     for (HistoricActivityInstance historicActivityInstance : historicActInstances) {
                         if (historicActivityInstance.getActivityId().equals(sequenceFlow.getTargetRef())) {
                             Map<String, Object> map = new HashMap<>();
-                            map.put("highLightedFlowId", sequenceFlow.getId());
                             map.put("highLightedFlowStartTime", historicActivityInstance.getStartTime().getTime());
+                            if(executedActivityRejectIds.contains(sequenceFlow.getSourceRef())) {
+                                map.put("highLightedRejectFlowId", sequenceFlow.getId());
+                            } else {
+                                map.put("highLightedFlowId", sequenceFlow.getId());
+                            }
                             tempMapList.add(map);
                         }
                     }
@@ -270,21 +311,73 @@ public class ActivitiServiceImpl implements ActivitiService {
                     // 遍历匹配的集合，取得开始时间最早的一个
                     long earliestStamp = 0L;
                     String highLightedFlowId = null;
+                    String highLightedRejectFlowId = null;
                     for (Map<String, Object> map : tempMapList) {
                         long highLightedFlowStartTime = Long.parseLong(map.get("highLightedFlowStartTime").toString());
                         if (earliestStamp == 0 || earliestStamp >= highLightedFlowStartTime) {
-                            highLightedFlowId = map.get("highLightedFlowId").toString();
+                            highLightedFlowId = map.containsKey("highLightedFlowId") ? map.get("highLightedFlowId").toString() : null;
+                            highLightedRejectFlowId = map.containsKey("highLightedRejectFlowId") ? map.get("highLightedRejectFlowId").toString() : null;
                             earliestStamp = highLightedFlowStartTime;
                         }
                     }
-                    highLightedFlowIds.add(highLightedFlowId);
+                    if (highLightedFlowId != null) {
+                        highLightedFlowIds.add(highLightedFlowId);
+                    }
+                    if (highLightedRejectFlowId != null) {
+                        highLightedRejectFlowIds.add(highLightedRejectFlowId);
+                    }
                 }
             }
         }
 
         entity.setActiveActivityIds(activeActivityIds);
+        entity.setExecutedActivityRejectIds(executedActivityRejectIds);
         entity.setExecutedActivityIds(executedActivityIds);
         entity.setHighlightedFlowIds(highLightedFlowIds);
+        entity.setHighlightedRejectFlowIds(highLightedRejectFlowIds);
         return entity;
+    }
+
+    @Override
+    public List<ActBusRelation> actBusRelationList() {
+        return null;
+    }
+
+    @Override
+    public List<Map<String, Object>> auditHis(String instanceId) {
+        return activitiMapper.auditHis(instanceId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public R completTask(String taskId, int bpmStatus, String reason) {
+        // 查询任务，返回任务对象
+        Task task = taskService.createTaskQuery()
+                .taskId(taskId)
+                .taskAssignee(SecurityUtils.getUser().getId())
+                .singleResult();
+
+        // 添加审批意见
+        taskService.addComment(task.getId(), task.getProcessInstanceId(), reason);
+
+        //RefundVariables refundVariables = taskService.getVariable(taskId, "refundVariables", RefundVariables.class);
+        int status = taskService.getVariable(taskId, "status", Integer.class);
+        taskService.setVariableLocal(taskId, "status-" + task.getTaskDefinitionKey(), bpmStatus);
+        if(status < 2) {
+            taskService.setVariable(taskId, "status", bpmStatus);
+        }
+
+        // 完成任务，参数：任务id
+        taskService.complete(task.getId());
+
+        String instanceId = task.getProcessInstanceId();
+        String businessKey = task.getBusinessKey();
+        // 查询任务，返回任务对象
+        task = taskService.createTaskQuery().processInstanceId(instanceId).singleResult();
+        if (task == null) { // 没有下一步任务，流程结束
+            // 修改业务表审核状态
+            feignActBusRelationService.updateBusBpmStatus(instanceId, bpmStatus + 1, businessKey);
+        }
+        return R.ok();
     }
 }

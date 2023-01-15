@@ -39,23 +39,6 @@ public class RefundActivitiController extends BaseController {
     private HistoryService historyService;
 
     /**
-     * 根据实例id查询审核流程历史
-     */
-    @GetMapping("/processInstanceHistoricTask/{instanceId}")
-    public R processInstanceHistoricTask(@PathVariable("instanceId") String instanceId) {
-        try {
-            // 查询历史，获取流程的相关信息
-            List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery() //创建查询对象
-                    .processInstanceId(instanceId) //使用流程实例ID查询
-                    .list();
-            return R.ok(list);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return R.failed();
-        }
-    }
-
-    /**
      * 根据id查询审核流程
      * 判断流程是否结束+查询历史
      */
@@ -109,6 +92,7 @@ public class RefundActivitiController extends BaseController {
         try {
             Map<String, Object> variables = new HashMap<>();
             variables.put("refundVariables", refundVariables);
+            variables.put("status", 0);
 
             // 启动一个请假流程实例，并绑定businessKey和variables
             ProcessInstance instance = runtimeService.startProcessInstanceByKey("Refund", refundVariables.getRefundApplyId(), variables);
@@ -125,33 +109,12 @@ public class RefundActivitiController extends BaseController {
                     .singleResult();
 
             // 进入下一步
-            taskService.claim(task.getId(), refundVariables.getUserName());
+            taskService.claim(task.getId(), refundVariables.getUserId());
             taskService.complete(task.getId());
             return R.ok(instance.getId());
         } catch (Exception e) {
             e.printStackTrace();
             return R.failed("启动退款流程实例失败，原因：" + e.getMessage());
-        }
-    }
-
-    /**
-     * 完成任务
-     */
-    @PostMapping("/completTask")
-    public R completTask(String instanceId) {
-        try {
-            // 查询任务，返回任务对象
-            Task task = taskService.createTaskQuery()
-                    .processInstanceId(instanceId)
-                    .taskAssignee(SecurityUtils.getUser().getId())
-                    .singleResult();
-
-            // 完成任务，参数：任务id
-            taskService.complete(task.getId());
-            return R.ok();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return R.failed("完成任务失败，原因：" + e.getMessage());
         }
     }
 }

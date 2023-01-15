@@ -60,6 +60,7 @@ public class TestActiviti {
         Deployment deployment = repositoryService.createDeployment()
                 .addClasspathResource("bpmn/Sh.bpmn20.xml")
                 .addClasspathResource("bpmn/Sh.png")
+                //.addInputStream("", null)
                 .name("审核流程")
                 .deploy();
 

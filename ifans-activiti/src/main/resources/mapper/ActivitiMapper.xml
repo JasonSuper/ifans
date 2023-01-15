@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifans.activiti.mapper.ActivitiMapper">
+	
+	<select id="auditHis" resultType="java.util.Map">
+		select ASSIGNEE_,CATEGORY_,CLAIM_TIME_,DELETE_REASON_,DESCRIPTION_,DUE_DATE_,
+			DURATION_,END_TIME_,EXECUTION_ID_,FORM_KEY_,ID_,NAME_,OWNER_,
+			PARENT_TASK_ID_,PRIORITY_,PROC_DEF_ID_,PROC_INST_ID_,START_TIME_,TASK_DEF_KEY_,TENANT_ID_,
+			su.user_name assigneeName
+    	from act_hi_taskinst aht
+        left join ifans.sys_user su on su.id = aht.ASSIGNEE_
+		where PROC_INST_ID_ = #{instanceId}
+	</select>
+</mapper>
