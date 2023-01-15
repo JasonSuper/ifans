@@ -60,4 +60,6 @@ public interface StoreOrderRefundapplyService extends IService<StoreOrderRefunda
      * @return 结果
      */
     int deleteStoreOrderRefundapplyById(String id);
+
+    String getInstanceId(String refundApplyId);
 }

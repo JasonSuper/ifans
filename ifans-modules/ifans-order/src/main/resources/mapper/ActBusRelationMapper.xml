@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifans.order.mapper.ActBusRelationMapper">
+
+	<select id="findByInstanceId" parameterType="java.lang.String" resultType="com.ifans.api.activiti.vo.ActBusRelationVo">
+		select abr.*
+		from ifans.act_bus_realtion abr
+		left join ifans.act_bus_realtion_refundapply abrr on abrr.act_bus_relation_id = abr.id
+		where abrr.activiti_instance_id = #{processInstanceId}
+	</select>
+
+	<update id="doUpdateBusBpmStatus">
+		update ${busTableName} set bpm_status = #{bpmStatus}
+		where id = #{busId}
+	</update>
+</mapper>

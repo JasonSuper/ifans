@@ -16,19 +16,4 @@ public interface FeignActivitiService {
      */
     @GetMapping("/auditHis/{instanceId}")
     R auditHis(@PathVariable("instanceId") String instanceId);
-
-    /**
-     * 拾取任务
-     *
-     * @param instanceId             流程实例id
-     * @param candidateGroupMatchStr 所属责任组，用于流程权限判断
-     */
-    @PostMapping(value = "/claimTask")
-    R claimTask(@RequestParam("instanceId") String instanceId, @RequestParam("candidateGroupMatchStr") String candidateGroupMatchStr);
-
-    /**
-     * 完成任务
-     */
-    @PostMapping(value = "/completTask")
-    R completTask(String instanceId);
 }

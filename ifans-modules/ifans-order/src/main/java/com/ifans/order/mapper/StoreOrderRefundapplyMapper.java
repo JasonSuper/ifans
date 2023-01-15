@@ -60,4 +60,6 @@ public interface StoreOrderRefundapplyMapper extends BaseMapper<StoreOrderRefund
      * @return 结果
      */
     int deleteStoreOrderRefundapplyByIds(String[] ids);
+
+    String getInstanceId(String refundApplyId);
 }

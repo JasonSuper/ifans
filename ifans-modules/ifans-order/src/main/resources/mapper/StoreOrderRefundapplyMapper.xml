@@ -8,33 +8,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="orderId"    column="order_id"    />
         <result property="applyTime"    column="apply_time"    />
-        <result property="activitiInstanceId"    column="activiti_instance_id"    />
+        <!--<result property="activitiInstanceId"    column="activiti_instance_id"    />-->
         <result property="refundReason"    column="refund_reason"    />
-        <result property="status"    column="status"    />
+        <result property="bpmStatus"    column="bpm_status"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <result property="remark"    column="remark"    />
     </resultMap>
 
     <sql id="selectStoreOrderRefundapplyVo">
-        select id, order_id, apply_time, activiti_instance_id, refund_reason, status, create_by, create_time, update_by, update_time, remark from store_order_refundapply
+        select id, order_id, apply_time, refund_reason, bpm_status, create_by, create_time, update_by, update_time, remark from store_order_refundapply
     </sql>
 
     <select id="selectStoreOrderRefundapplyList" parameterType="com.ifans.api.order.domain.StoreOrderRefundapply" resultMap="StoreOrderRefundapplyResult">
-        <include refid="selectStoreOrderRefundapplyVo"/>
+        select sor.*, abrr.activiti_instance_id activitiInstanceId
+        from store_order_refundapply sor
+        left join ifans.act_bus_realtion_refundapply abrr on abrr.bus_id = sor.id
         <where>  
             <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
             <if test="applyTime != null "> and apply_time = #{applyTime}</if>
             <if test="refundReason != null  and refundReason != ''"> and refund_reason = #{refundReason}</if>
-            <if test="status != null "> and status = #{status}</if>
+            <if test="bpmStatus != null "> and bpm_status = #{bpmStatus}</if>
         </where>
     </select>
     
     <select id="selectStoreOrderRefundapplyById" parameterType="String" resultMap="StoreOrderRefundapplyResult">
-        <include refid="selectStoreOrderRefundapplyVo"/>
-        where id = #{id}
+        select sor.*, abrr.activiti_instance_id activitiInstanceId
+        from store_order_refundapply sor
+        left join ifans.act_bus_realtion_refundapply abrr on abrr.bus_id = sor.id
+        where sor.id = #{id}
     </select>
         
     <insert id="insertStoreOrderRefundapply" parameterType="com.ifans.api.order.domain.StoreOrderRefundapply">
@@ -44,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="orderId != null and orderId != ''">order_id,</if>
             <if test="applyTime != null">apply_time,</if>
             <if test="refundReason != null">refund_reason,</if>
-            <if test="status != null">status,</if>
+            <if test="bpmStatus != null">bpm_status,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -56,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="orderId != null and orderId != ''">#{orderId},</if>
             <if test="applyTime != null">#{applyTime},</if>
             <if test="refundReason != null">#{refundReason},</if>
-            <if test="status != null">#{status},</if>
+            <if test="bpmStatus != null">#{bpmStatus},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -71,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="orderId != null and orderId != ''">order_id = #{orderId},</if>
             <if test="applyTime != null">apply_time = #{applyTime},</if>
             <if test="refundReason != null">refund_reason = #{refundReason},</if>
-            <if test="status != null">status = #{status},</if>
+            <if test="bpmStatus != null">bpm_status = #{bpmStatus},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
@@ -91,4 +96,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="getInstanceId" parameterType="String" resultType="String">
+        select activiti_instance_id
+        from act_bus_realtion_refundapply
+        where bus_id = #{refundApplyId}
+    </select>
 </mapper>

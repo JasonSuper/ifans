@@ -2,6 +2,8 @@ package com.ifans.common.security.service;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.ifans.api.system.domain.SysRole;
+import com.ifans.api.system.domain.SysUser;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
@@ -39,13 +41,20 @@ public class IfansUser extends User implements OAuth2AuthenticatedPrincipal {
 	@Getter
 	private final String phone;
 
+	/**
+	 * 用户信息
+	 */
+	@Getter
+	private SysUser sysUser;
+
 	public IfansUser(String id, String deptId, String username, String password, String phone, boolean enabled,
                      boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
-                     Collection<? extends GrantedAuthority> authorities) {
+                     Collection<? extends GrantedAuthority> authorities, SysUser sysUser) {
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 		this.id = id;
 		this.deptId = deptId;
 		this.phone = phone;
+		this.sysUser = sysUser;
 	}
 
 	/**

@@ -63,7 +63,7 @@ public interface IfansUserDetailsService extends UserDetailsService, Ordered {
         // 构造security用户
         return new IfansUser(user.getId(), user.getDeptId(), user.getEmail(),
                 SecurityConstants.BCRYPT + user.getPassword(), user.getPhonenumber(), true, true, true,
-                StrUtil.equals(user.getStatus(), CommonConstants.STATUS_NORMAL), authorities);
+                StrUtil.equals(user.getStatus(), CommonConstants.STATUS_NORMAL), authorities, user);
     }
 
     /**

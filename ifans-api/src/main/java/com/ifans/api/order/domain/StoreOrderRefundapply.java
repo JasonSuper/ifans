@@ -37,7 +37,7 @@ public class StoreOrderRefundapply extends BaseEntity {
     /**
      * 退款流程实例ID
      */
-    @TableField("activiti_instance_id")
+    @TableField(exist = false)
     private String activitiInstanceId;
 
     /**

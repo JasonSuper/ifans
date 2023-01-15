@@ -1,8 +1,12 @@
 package com.ifans.order.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ifans.api.activiti.FeignActivitiService;
 import com.ifans.api.activiti.FeignRefundActivitiService;
+import com.ifans.api.activiti.domain.ActBusRelation;
 import com.ifans.api.activiti.domain.RefundVariables;
+import com.ifans.api.order.domain.ActBusRealtionRefundapply;
 import com.ifans.api.order.domain.StoreOrder;
 import com.ifans.api.order.domain.StoreOrderRefundapply;
 import com.ifans.common.core.util.R;
@@ -11,6 +15,8 @@ import com.ifans.common.core.web.controller.BaseController;
 import com.ifans.common.core.web.domain.AjaxResult;
 import com.ifans.common.core.web.page.TableDataInfo;
 import com.ifans.common.security.util.SecurityUtils;
+import com.ifans.order.service.ActBusRealtionRefundapplyService;
+import com.ifans.order.service.ActBusRelationService;
 import com.ifans.order.service.OrderService;
 import com.ifans.order.service.StoreOrderRefundapplyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +38,15 @@ public class ReFundApplyController extends BaseController {
     @Autowired
     private StoreOrderRefundapplyService storeOrderRefundapplyService;
     @Autowired
+    private FeignActivitiService feignActivitiService;
+    @Autowired
     private FeignRefundActivitiService feignRefundActivitiService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private ActBusRealtionRefundapplyService actBusRealtionRefundapplyService;
+    @Autowired
+    private ActBusRelationService actBusRealtionService;
 
     /**
      * 退款申请列表
@@ -65,10 +77,9 @@ public class ReFundApplyController extends BaseController {
     @PreAuthorize("@pms.hasPermission('order:refundapply:progressQuery')")
     @GetMapping("/progressQuery/{refundApplyId}")
     public R progressQuery(@PathVariable("refundApplyId") String refundApplyId) {
-        StoreOrderRefundapply refundapply = storeOrderRefundapplyService.getById(refundApplyId);
-        String instanceId = refundapply.getActivitiInstanceId();
+        String instanceId = storeOrderRefundapplyService.getInstanceId(refundApplyId);
         // 根据实例id查询审核流程历史
-        R r = feignRefundActivitiService.processInstanceHistoricTask(instanceId);
+        R r = feignActivitiService.auditHis(instanceId);
         if (r.getCode() == 200) {
             return R.ok(r.getData());
         }
@@ -105,11 +116,19 @@ public class ReFundApplyController extends BaseController {
         if (r.getCode() == 200) {
             storeOrderRefundapply.setId(variables.getRefundApplyId());
             // 绑定退款实例流程id
-            storeOrderRefundapply.setActivitiInstanceId(r.getData().toString());
+            //storeOrderRefundapply.setActivitiInstanceId(r.getData().toString());
+
             storeOrderRefundapply.setApplyTime(new Date());
             storeOrderRefundapply.setCreateBy(SecurityUtils.getUser().getUsername());
             storeOrderRefundapply.setCreateTime(new Date());
-            return R.ok(storeOrderRefundapplyService.save(storeOrderRefundapply));
+            storeOrderRefundapplyService.save(storeOrderRefundapply);
+
+            // 查询业务关联的对应数据
+            ActBusRelation actBusRelation = actBusRealtionService.getOne(Wrappers.<ActBusRelation>lambdaQuery().eq(ActBusRelation::getUniqueCode, "refundapply"));
+
+            // 流程与业务关联
+            actBusRealtionRefundapplyService.save(new ActBusRealtionRefundapply(r.getData().toString(), actBusRelation.getId(), storeOrderRefundapply.getId()));
+            return R.ok();
         } else {
             return R.failed("退款申请创建失败！");
         }

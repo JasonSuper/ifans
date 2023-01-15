@@ -90,4 +90,9 @@ public class StoreOrderRefundapplyServiceImpl extends ServiceImpl<StoreOrderRefu
     public int deleteStoreOrderRefundapplyById(String id) {
         return storeOrderRefundapplyMapper.deleteStoreOrderRefundapplyById(id);
     }
+
+    @Override
+    public String getInstanceId(String refundApplyId) {
+        return storeOrderRefundapplyMapper.getInstanceId(refundApplyId);
+    }
 }

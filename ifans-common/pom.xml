@@ -18,6 +18,7 @@
         <module>common-security-old</module>
         <module>common-oss</module>
         <module>common-feign</module>
+        <module>common-datascope</module>
     </modules>
 
 </project>

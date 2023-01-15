@@ -23,16 +23,6 @@ public class FeignActivitiFallbackFactory implements FallbackFactory<FeignActivi
             public R auditHis(String instanceId) {
                 return R.failed("根据实例id查询审核流程历史，失败:" + throwable.getMessage());
             }
-
-            @Override
-            public R claimTask(String instanceId, String candidateGroupMatchStr) {
-                return R.failed("拾取任务，失败:" + throwable.getMessage());
-            }
-
-            @Override
-            public R completTask(String instanceId) {
-                return R.failed("完成任务，失败:" + throwable.getMessage());
-            }
         };
     }
 }
