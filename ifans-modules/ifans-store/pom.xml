@@ -64,6 +64,11 @@
             <artifactId>common-redis</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.ifans</groupId>
+            <artifactId>common-elasticsearch</artifactId>
+        </dependency>
+
         <!-- Jwt -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

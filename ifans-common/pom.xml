@@ -19,6 +19,7 @@
         <module>common-oss</module>
         <module>common-feign</module>
         <module>common-datascope</module>
+        <module>common-elasticsearch</module>
     </modules>
 
 </project>
