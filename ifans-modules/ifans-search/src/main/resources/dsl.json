@@ -1,0 +1,108 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "goodsName": "超级"
+          }
+        }
+      ],
+      "filter": [
+        {
+          "range": {
+            "price": {
+              "gte": 10,
+              "lte": 2000
+            }
+          }
+        },
+        {
+          "nested": {
+            "path": "attrs",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "must": [
+                        {"term": {"attrs.attrId": {"value": 1}}},
+                        {"terms": {"attrs.attrValue": ["广东", "福建"]}}
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "score_mode":"none"
+          }
+        },
+        {
+          "nested": {
+            "path": "attrs",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "bool": {
+                      "must": [
+                        {"term": {"attrs.attrId": {"value": 2}}},
+                        {"terms": {"attrs.attrValue": ["演出"]}}
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "score_mode":"none"
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "price": {
+        "order": "desc"
+      }
+    }
+  ],
+  "from": 0,
+  "size": 5,
+  "highlight": {
+    "fields": {
+      "goodsName": {}
+    },
+    "pre_tags": "<b style='color:red'>",
+    "post_tags": "</b>"
+  },
+  "aggs": {
+    "attrs": {
+      "nested": {
+        "path": "attrs"
+      },
+      "aggs": {
+        "attrIdAgg": {
+          "terms": {
+            "field": "attrs.attrId",
+            "size": 10
+          },
+          "aggs": {
+            "attrNameAgg": {
+              "terms": {
+                "field": "attrs.attrName",
+                "size": 10
+              }
+            },
+            "attrValueAgg": {
+              "terms": {
+                "field": "attrs.attrValue",
+                "size": 10
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -33,10 +33,5 @@
             <groupId>com.ifans</groupId>
             <artifactId>common-core</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>co.elastic.clients</groupId>
-            <artifactId>elasticsearch-java</artifactId>
-        </dependency>
     </dependencies>
 </project>

@@ -1,12 +1,12 @@
 # Tomcat
 server:
-  port: 9205
+  port: 9215
 
 # Spring
-spring: 
+spring:
   application:
     # 应用名称
-    name: ifans-store
+    name: ifans-search
   profiles:
     # 环境配置
     active: dev
@@ -26,6 +26,7 @@ spring:
         # 共享配置
         shared-configs:
           - ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          - ifans-elasticsearch.yml
         username: nacos
         password: nacos
         namespace: ifans-dev
@@ -35,15 +36,6 @@ spring:
       transport:
         # 控制台地址
         dashboard: 127.0.0.1:8858
-      # nacos配置持久化
-#      datasource:
-#        ds1:
-#          nacos:
-#            server-addr: 127.0.0.1:8848
-#            dataId: sentinel-ifans-gateway
-#            groupId: DEFAULT_GROUP
-#            data-type: json
-#            rule-type: flow
 
 feign:
   sentinel:

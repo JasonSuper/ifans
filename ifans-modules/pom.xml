@@ -19,6 +19,7 @@
         <module>ifans-system</module>
         <module>ifans-gen</module>
         <module>ifans-fileupload</module>
+        <module>ifans-search</module>
     </modules>
 
 </project>

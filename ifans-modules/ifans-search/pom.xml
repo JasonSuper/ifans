@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ifans-store</artifactId>
+    <artifactId>ifans-search</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -17,11 +17,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-        </dependency>
-
         <!-- SpringBoot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -44,6 +39,17 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- Sentinel Datasource Nacos -->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.ifans</groupId>
             <artifactId>common-security</artifactId>
@@ -64,35 +70,9 @@
             <artifactId>common-redis</artifactId>
         </dependency>
 
-        <!-- Jwt -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-        </dependency>
-
-        <!-- Sentinel Datasource Nacos -->
-        <dependency>
-            <groupId>com.alibaba.csp</groupId>
-            <artifactId>sentinel-datasource-nacos</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-
-        <!-- 对象存储OSS -->
         <dependency>
             <groupId>com.ifans</groupId>
-            <artifactId>common-oss</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.ifans</groupId>
-            <artifactId>common-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.ifans</groupId>
-            <artifactId>ifans-api</artifactId>
+            <artifactId>common-elasticsearch</artifactId>
         </dependency>
     </dependencies>
 </project>
