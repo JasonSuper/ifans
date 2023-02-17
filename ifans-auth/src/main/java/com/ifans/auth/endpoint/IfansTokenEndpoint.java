@@ -37,6 +37,8 @@ import com.ifans.common.security.util.OAuthClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
@@ -87,6 +89,16 @@ public class IfansTokenEndpoint {
     private final RedisTemplate<String, Object> redisTemplate;
 
     private final CacheManager cacheManager;
+
+    @GetMapping("/logtest")
+    public R logtest(){
+
+        log.info("hi i'm helen");
+        log.warn("warning!!!");
+        log.error("it's a error");
+
+        return R.ok();
+    }
 
     /**
      * 认证页面

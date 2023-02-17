@@ -39,12 +39,12 @@
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>3.17.3</version>
-                <exclusions>
+                <!--<exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
-                </exclusions>
+                </exclusions>-->
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -59,6 +59,12 @@
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
                 <version>2021.0.4.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.cloud</groupId>
+                        <artifactId>spring-cloud-commons</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- SpringCloud Alibaba Nacos Config -->
@@ -104,6 +110,12 @@
                 <groupId>com.alibaba.csp</groupId>
                 <artifactId>sentinel-datasource-nacos</artifactId>
                 <version>1.8.6</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.alibaba.nacos</groupId>
+                        <artifactId>nacos-client</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- 验证码 -->
@@ -139,6 +151,12 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>transmittable-thread-local</artifactId>
                 <version>2.13.2</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-simple</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- 数据库驱动 -->
@@ -375,16 +393,22 @@
             <version>1.1.1</version>
         </dependency>
         <!-- no more than 2.3.3-->
-        <dependency>
+        <!--<dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
             <version>2.3.3</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.8.10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 
@@ -400,5 +424,17 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.25</version>
         </dependency>
+
+        <!--<dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.11</version>
+        </dependency>-->
+
+        <!--<dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>1.7.5</version>
+        </dependency>-->
     </dependencies>
 </project>

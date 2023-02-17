@@ -14,7 +14,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableIfansFeignClients
 @EnableDiscoveryClient
-@SpringBootApplication(scanBasePackages = {"com.ifans"}, exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"com.ifans"})
 public class IfansAuthApplication {
 
     public static void main(String[] args) {
