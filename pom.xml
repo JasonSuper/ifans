@@ -413,7 +413,7 @@
 
 
         <!--用于解决日志不打印问题-->
-        <dependency>
+        <!--<dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.36</version>
@@ -423,13 +423,14 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.25</version>
-        </dependency>
+        </dependency>-->
 
-        <!--<dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.11</version>
-        </dependency>-->
+            <scope>compile</scope>
+        </dependency>
 
         <!--<dependency>
             <groupId>org.slf4j</groupId>
