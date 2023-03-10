@@ -27,6 +27,7 @@ spring:
         shared-configs:
           - ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
           - ifans-elasticsearch.yml
+          - ifans-redis.yml
         username: nacos
         password: nacos
         namespace: ifans-dev

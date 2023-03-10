@@ -90,15 +90,6 @@ public class IfansTokenEndpoint {
 
     private final CacheManager cacheManager;
 
-    @GetMapping("/logtest")
-    public R logtest(){
-
-        log.info("hi i'm helen");
-        log.warn("warning!!!");
-        log.error("it's a error");
-
-        return R.ok();
-    }
 
     /**
      * 认证页面

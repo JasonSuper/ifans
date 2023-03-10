@@ -33,6 +33,9 @@ spring:
           - data-id: ifans-common.yml # 配置文件名-Data Id，Data Id必须写后缀
             group: DEFAULT_GROUP   # 默认为DEFAULT_GROUP
             refresh: true
+          - data-id: ifans-redis.yml
+            group: DEFAULT_GROUP   # 默认为DEFAULT_GROUP
+            refresh: true
         username: nacos
         password: nacos
         namespace: ifans-dev

@@ -369,6 +369,7 @@ public class ActivitiServiceImpl implements ActivitiService {
 
         // 完成任务，参数：任务id
         taskService.complete(task.getId());
+        //taskService.complete(task.getId(), variables);
 
         String instanceId = task.getProcessInstanceId();
         String businessKey = task.getBusinessKey();
